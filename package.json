@@ -1,0 +1,38 @@
+{
+  "name": "skribblhub-to-epub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "run": "tsc index.ts",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "skribblhub",
+    "epub"
+  ],
+  "author": {
+    "name": "Anna Damm",
+    "email": "anna.damm87@googlemail.com",
+    "url": "https://anna-damm.de/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnnaDamm/skribblhub-to-epub.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "epub-gen": "^0.1.0",
+    "puppeteer": "^19.5.0"
+  },
+  "homepage": "https://github.com/AnnaDamm/skribblhub-to-epub",
+  "bugs": {
+    "url": "https://github.com/AnnaDamm/skribblhub-to-epub/issues"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "eslint": "^8.31.0",
+    "typescript": "^4.9.4"
+  }
+}
