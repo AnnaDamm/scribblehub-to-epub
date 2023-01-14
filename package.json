@@ -26,7 +26,8 @@
   "dependencies": {
     "commander": "^9.5.0",
     "epub-gen": "^0.1.0",
-    "puppeteer": "^19.5.0"
+    "puppeteer": "^19.5.0",
+    "yesno": "^0.4.0"
   },
   "homepage": "https://github.com/AnnaDamm/skribblhub-to-epub",
   "bugs": {

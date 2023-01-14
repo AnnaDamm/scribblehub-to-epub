@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer'
 
-export class Browser {
+class BrowserSingleton {
   /**
    * @returns {Promise<Browser>}
    */
@@ -21,24 +21,15 @@ export class Browser {
   }
 
   /**
-   * @callback wrapPageCallback
-   * @param {Page} page
-   * @return Promise<void>
+   * @returns {Promise<Page>}
    */
-  /**
-   * @param {wrapPageCallback} callback
-   */
-  async wrapPage (callback) {
+  async newPage () {
     const browser = await this.launch()
     const page = await browser.newPage()
     await page.setUserAgent('Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0')
     this.addConsoleLog(page)
 
-    try {
-      return await callback(page)
-    } finally {
-      await page.close()
-    }
+    return page;
   }
 
   /**
@@ -79,4 +70,4 @@ export class Browser {
   }
 }
 
-export const browser = new Browser()
+export const Browser = new BrowserSingleton()
