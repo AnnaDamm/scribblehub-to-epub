@@ -1,12 +1,12 @@
 [*]
 charset = utf-8
 end_of_line = crlf
-indent_size = 4
+indent_size = 2
 indent_style = space
 insert_final_newline = false
 max_line_length = 120
 tab_width = 4
-ij_continuation_indent_size = 8
+ij_continuation_indent_size = 4
 ij_formatter_off_tag = @formatter:off
 ij_formatter_on_tag = @formatter:on
 ij_formatter_tags_enabled = false
@@ -23,7 +23,6 @@ ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.cjs,*.js}]
-ij_continuation_indent_size = 4
 ij_javascript_align_imports = false
 ij_javascript_align_multiline_array_initializer_expression = false
 ij_javascript_align_multiline_binary_operation = false
@@ -42,7 +41,6 @@ ij_javascript_array_initializer_wrap = off
 ij_javascript_assignment_wrap = off
 ij_javascript_binary_operation_sign_on_next_line = false
 ij_javascript_binary_operation_wrap = off
-ij_javascript_blacklist_imports = rxjs/Rx,node_modules/**,**/node_modules/**,@angular/material,@angular/material/typings/**
 ij_javascript_blank_lines_after_imports = 1
 ij_javascript_blank_lines_around_class = 1
 ij_javascript_blank_lines_around_field = 0
@@ -135,7 +133,7 @@ ij_javascript_space_before_function_left_parenth = true
 ij_javascript_space_before_generator_mult = false
 ij_javascript_space_before_if_left_brace = true
 ij_javascript_space_before_if_parentheses = true
-ij_javascript_space_before_method_call_parentheses = false
+ij_javascript_space_before_method_call_parentheses = true
 ij_javascript_space_before_method_left_brace = true
 ij_javascript_space_before_method_parentheses = false
 ij_javascript_space_before_property_colon = false

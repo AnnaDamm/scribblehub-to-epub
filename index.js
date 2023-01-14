@@ -1,26 +1,26 @@
-import {Command} from 'commander';
-import {browser} from "./src/Browser/browser.js";
-import {MainPage} from "./src/ScribbleHub/main-page.js";
-import {Chapters} from "./src/ScribbleHub/chapters.js";
+import { Command } from 'commander'
+import { browser } from './src/Browser/browser.js'
+import { MainPage } from './src/ScribbleHub/main-page.js'
+import { Chapters } from './src/ScribbleHub/chapters.js'
 
-const program = new Command();
+const program = new Command()
 program
-    .name('scribble-to-epub')
-    .argument('<url>', 'base url of the Scribble Hub series')
-    .argument('<out-file>', 'file name of the generated epub')
-    .action(run);
+  .name('scribble-to-epub')
+  .argument('<url>', 'base url of the Scribble Hub series')
+  .argument('<out-file>', 'file name of the generated epub')
+  .action(run)
 
-await program.parseAsync();
+await program.parseAsync()
 
-async function run(urlString, outFile) {
-    const url = new URL(urlString);
-    const mainPage = new MainPage(url);
-    // await mainPage.loadMainPage();
+async function run (urlString, outFile) {
+  const url = new URL(urlString)
+  const mainPage = new MainPage(url)
+  // await mainPage.loadMainPage();
 
-    const chapters = new Chapters(url);
-    const chapterUrls = await chapters.loadChapterUrls();
+  const chapters = new Chapters(url)
+  const chapterUrls = await chapters.loadChapterUrls()
 
-    console.log(chapterUrls);
+  console.log(chapterUrls)
 
-    await browser.close();
+  await browser.close()
 }

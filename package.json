@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "run": "node index.js",
-    "lint": "eslint ."
+    "lint": "standard",
+    "lint:fix": "standard --fix"
   },
   "keywords": [
     "skribblhub",
@@ -32,6 +33,6 @@
     "url": "https://github.com/AnnaDamm/skribblhub-to-epub/issues"
   },
   "devDependencies": {
-    "eslint": "^8.31.0"
+    "standard": "^17.0.0"
   }
 }
