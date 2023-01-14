@@ -1,4 +1,4 @@
-import {Browser} from "../Browser/browser.js";
+import {browser} from "../Browser/browser.js";
 
 
 const allChaptersUrl = "https://www.scribblehub.com/wp-admin/admin-ajax.php"
@@ -23,8 +23,8 @@ export class Chapters {
      * @returns {Promise<URL[]>}
      */
     async loadChapterUrls() {
-        return await Browser.wrapPage(async (page) => {
-            const response = await Browser.sendPostRequest(page, allChaptersUrl, new URLSearchParams({
+        return await browser.wrapPage(async (page) => {
+            const response = await browser.sendPostRequest(page, allChaptersUrl, new URLSearchParams({
                 action: 'wi_getreleases_pagination',
                 pagenum: -1,
                 mypostid: this.postId

@@ -4,7 +4,7 @@ export class Browser {
     /**
      * @returns {Promise<Browser>}
      */
-    static async launch() {
+    async launch() {
         if (this.browser === undefined) {
             this.browser = await puppeteer.launch();
         }
@@ -14,7 +14,7 @@ export class Browser {
     /**
      * @returns {Promise<void>}
      */
-    static async close() {
+    async close() {
         if (this.browser !== undefined) {
             await this.browser.close();
         }
@@ -29,11 +29,11 @@ export class Browser {
     /**
      * @param {wrapPageCallback} callback
      */
-    static async wrapPage(callback) {
-        const browser = await Browser.launch();
+    async wrapPage(callback) {
+        const browser = await this.launch();
         const page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0');
-        Browser.addConsoleLog(page);
+        this.addConsoleLog(page);
 
         try {
             return await callback(page);
@@ -50,7 +50,7 @@ export class Browser {
      * @param {Object.<string, string>} headers
      * @returns {Promise<Response>}
      */
-    static async sendPostRequest(page, url, postData, headers = {
+    async sendPostRequest(page, url, postData, headers = {
         "Content-Type": "application/x-www-form-urlencoded"
     }) {
         await page.setRequestInterception(true);
@@ -71,7 +71,7 @@ export class Browser {
     /**
      * @param {Page} page
      */
-    static addConsoleLog(page) {
+    addConsoleLog(page) {
         page.on('console', async (msg) => {
             const msgArgs = msg.args();
             for (let i = 0; i < msgArgs.length; ++i) {
@@ -80,3 +80,5 @@ export class Browser {
         });
     }
 }
+
+export const browser = new Browser();

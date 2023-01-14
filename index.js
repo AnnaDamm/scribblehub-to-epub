@@ -1,5 +1,5 @@
 import {Command} from 'commander';
-import {Browser} from "./src/Browser/browser.js";
+import {browser} from "./src/Browser/browser.js";
 import {MainPage} from "./src/ScribbleHub/main-page.js";
 import {Chapters} from "./src/ScribbleHub/chapters.js";
 
@@ -22,5 +22,5 @@ async function run(urlString, outFile) {
 
     console.log(chapterUrls);
 
-    await Browser.close();
+    await browser.close();
 }
