@@ -22,7 +22,7 @@ export class ImportCommand extends Command {
       const book = new Book(new URL(urlString))
 
       try {
-        await OutFile.prepareFileHandle(outFile, () => book.getSlug())
+        await OutFile.prepareFileHandle(outFile, async () => (await book.getBookMetaData()).slug)
       } catch (error) {
         process.stderr.write(error.toString())
         process.exit(1)

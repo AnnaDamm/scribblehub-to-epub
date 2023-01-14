@@ -1,4 +1,5 @@
 import { Browser } from '../Browser/browser.js'
+import { BookMetadata } from './book-metadata.js'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
@@ -14,30 +15,14 @@ export class Book {
   }
 
   /**
-   * @returns {Promise<string>}
+   * @returns {Promise<BookMetadata>}
    */
-  async getSlug () {
-    const canonicalUrl = await this.getCanonicalUrl()
-    const match = canonicalUrl.match(/.+\/(?<slug>.+?)\/$/)
-    return match.groups.slug
-  }
-
-  /**
-   * @returns {Promise<string>}
-   */
-  async getCanonicalUrl () {
-    return (async () => {
-      const page = await this.getPage()
-      return await page.$eval('link[rel="canonical"]', (element) => element.getAttribute('href'))
-    })()
-  }
-
-  /**
-   * @returns {Promise<number>}
-   */
-  async getPostId () {
-    const page = await this.getPage()
-    return parseInt(await page.$('#id="mypostid"', (element) => element.getAttribute('value')), 10)
+  async getBookMetaData () {
+    if (this._bookMetaData === undefined) {
+      this._bookMetaData = new BookMetadata()
+      await this._bookMetaData.load(await this.getPage())
+    }
+    return this._bookMetaData
   }
 
   /**
@@ -62,7 +47,7 @@ export class Book {
       const response = await Browser.sendPostRequest(page, this.url.origin + allChaptersPath, new URLSearchParams({
         action: 'wi_getreleases_pagination',
         pagenum: -1,
-        mypostid: await this.getPostId()
+        mypostid: (await this.getBookMetaData()).postId
       }).toString())
 
       await page.setContent(await response.text())
