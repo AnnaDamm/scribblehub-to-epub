@@ -12,13 +12,15 @@ program
 
 await program.parseAsync();
 
-async function run(url, outFile) {
+async function run(urlString, outFile) {
+    const url = new URL(urlString);
     const mainPage = new MainPage(url);
     // await mainPage.loadMainPage();
 
-    const chapters = new Chapters(mainPage);
-    // await chapters.loadAllChapters();
+    const chapters = new Chapters(url);
+    const chapterUrls = await chapters.loadChapterUrls();
 
+    console.log(chapterUrls);
 
     await Browser.close();
 }

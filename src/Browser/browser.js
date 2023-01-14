@@ -32,7 +32,8 @@ export class Browser {
     static async wrapPage(callback) {
         const browser = await Browser.launch();
         const page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0')
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0');
+        Browser.addConsoleLog(page);
 
         try {
             return await callback(page);
@@ -43,11 +44,10 @@ export class Browser {
 
 
     /**
-     * @typedef {{string, string}} Headers
      * @param {Page} page
      * @param {string} url
      * @param {string} postData
-     * @param {Headers} headers
+     * @param {Object.<string, string>} headers
      * @returns {Promise<Response>}
      */
     static async sendPostRequest(page, url, postData, headers = {
@@ -66,5 +66,17 @@ export class Browser {
             });
         });
         return await page.goto(url);
+    }
+
+    /**
+     * @param {Page} page
+     */
+    static addConsoleLog(page) {
+        page.on('console', async (msg) => {
+            const msgArgs = msg.args();
+            for (let i = 0; i < msgArgs.length; ++i) {
+                console.log(await msgArgs[i].jsonValue());
+            }
+        });
     }
 }

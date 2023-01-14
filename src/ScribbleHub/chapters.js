@@ -1,4 +1,3 @@
-import {MainPage} from "./main-page.js";
 import {Browser} from "../Browser/browser.js";
 
 
@@ -6,27 +5,44 @@ const allChaptersUrl = "https://www.scribblehub.com/wp-admin/admin-ajax.php"
 
 export class Chapters {
     /**
-     * @param {MainPage} mainPage
+     * @param {URL} url
      */
-    constructor(mainPage) {
-        this.mainPage = mainPage;
+    constructor(url) {
+        this.url = url;
     }
 
     /**
      * @returns {number}
      */
     get postId() {
-        return parseInt(this.mainPage.url.replace(/^.+\/series\/(\d+).*$/, '$1'), 10);
+        return parseInt(this.url.toString().replace(/^.+\/series\/(\d+).*$/, '$1'), 10);
     }
 
-    async loadAllChapters() {
-        await Browser.wrapPage(async (page) => {
+
+    /**
+     * @returns {Promise<URL[]>}
+     */
+    async loadChapterUrls() {
+        return await Browser.wrapPage(async (page) => {
             const response = await Browser.sendPostRequest(page, allChaptersUrl, new URLSearchParams({
                 action: 'wi_getreleases_pagination',
                 pagenum: -1,
                 mypostid: this.postId
             }).toString());
-            console.log(response.status(), await response.text());
+
+
+            return page.evaluate(async (responseText) => {
+                const templateElement = document.createRange().createContextualFragment(responseText);
+
+                const chapterDivs = [...templateElement.querySelectorAll('.toc_w')]
+                    .sort((divA, divB) => Math.sign(
+                        parseInt(divA.getAttribute('order'), 10) - parseInt(divB.getAttribute('order'), 10)
+                    ));
+                return chapterDivs.map((div) => {
+                    const anchor = div.querySelector('.toc_a');
+                    return anchor.getAttribute('href');
+                });
+            }, await response.text());
         });
     }
 }
