@@ -38,26 +38,41 @@ export class Book {
   }
 
   /**
-   * @private
-   * @returns { Promise<URL[]>}
+   * @returns {Promise<Chapter[]>}
    */
-  get chapterUrls () {
-    return (async () => {
-      const page = await Browser.newPage()
-      const response = await Browser.sendPostRequest(page, this.url.origin + allChaptersPath, new URLSearchParams({
-        action: 'wi_getreleases_pagination',
-        pagenum: -1,
-        mypostid: (await this.getBookMetaData()).postId
-      }).toString())
+  async getChapters () {
+    if (this._chapters === undefined) {
+      const chapterUrls = await this.getChapterUrls()
+      chapterUrls.forEach((url) => console.log(url.toString()))
 
-      await page.setContent(await response.text())
-      return page.$$eval('.toc_w', (chapterNodes) =>
+      this._chapters = []
+    }
+
+    return this._chapters
+  }
+  //
+  /**
+   * @private
+   * @returns {Promise<URL[]>}
+   */
+  async getChapterUrls () {
+    const page = await Browser.newPage()
+    const response = await Browser.sendPostRequest(page, this.url.origin + allChaptersPath, new URLSearchParams({
+      action: 'wi_getreleases_pagination',
+      pagenum: -1,
+      mypostid: (await this.getBookMetaData()).postId
+    }).toString())
+    await page.setContent(await response.text())
+
+    const urlStrings = await page.$$eval(
+      '.toc_w',
+      (chapterNodes) =>
         chapterNodes
           .sort((nodeA, nodeB) => (
             Math.sign(parseInt(nodeA.getAttribute('order'), 10) - parseInt(nodeB.getAttribute('order'), 10)))
           )
-          .map((chapterNode) => new URL(chapterNode.querySelector('.toc_a').getAttribute('href')))
-      )
-    })()
+          .map((chapterNode) => chapterNode.querySelector('.toc_a').getAttribute('href'))
+    )
+    return urlStrings.map((urlString) => new URL(urlString))
   }
 }

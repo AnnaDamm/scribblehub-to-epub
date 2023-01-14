@@ -12,9 +12,10 @@ class OutFileSingleton {
   /**
    * @param {string} outFile
    * @param {function(): Promise<string>} fallbackNameFunction
+   * @param {boolean|undefined} overwrite
    * @returns {Promise<number>}
    */
-  async prepareFileHandle (outFile, fallbackNameFunction) {
+  async prepareFileHandle (outFile, fallbackNameFunction, overwrite) {
     if (outFile === undefined) {
       outFile = path.resolve(defaultDistDirectory, (await fallbackNameFunction()) + defaultExtension)
       if (!fs.existsSync(defaultDistDirectory)) {
@@ -23,7 +24,7 @@ class OutFileSingleton {
     } else {
       outFile = path.isAbsolute(outFile) ? outFile : path.resolve(process.cwd(), outFile)
     }
-    if (fs.existsSync(outFile) && !(await this.askForFileOverwrite(outFile))) {
+    if (overwrite === false || overwrite === undefined && fs.existsSync(outFile) && !(await this.askForFileOverwrite(outFile))) {
       throw new Error('Not overwriting existing file. aborting.')
     }
 
@@ -36,7 +37,7 @@ class OutFileSingleton {
 
   /**
    * @param {string} outFile
-   * @return Promise<boolean>
+   * @returns Promise<boolean>
    * @private
    */
   async askForFileOverwrite (outFile) {

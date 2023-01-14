@@ -1,7 +1,7 @@
 {
-  "name": "skribblhub-to-epub",
+  "name": "scribblehub-to-epub",
   "version": "1.0.0",
-  "description": "",
+  "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -10,7 +10,8 @@
     "lint:fix": "standard --fix"
   },
   "keywords": [
-    "skribblhub",
+    "scribblehub",
+    "books",
     "epub"
   ],
   "author": {
@@ -20,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AnnaDamm/skribblhub-to-epub.git"
+    "url": "git+https://github.com/AnnaDamm/scribblehub-to-epub.git"
   },
   "license": "ISC",
   "dependencies": {
@@ -29,9 +30,9 @@
     "puppeteer": "^19.5.0",
     "yesno": "^0.4.0"
   },
-  "homepage": "https://github.com/AnnaDamm/skribblhub-to-epub",
+  "homepage": "https://github.com/AnnaDamm/scribblehub-to-epub.git",
   "bugs": {
-    "url": "https://github.com/AnnaDamm/skribblhub-to-epub/issues"
+    "url": "https://github.com/AnnaDamm/scribblehub-to-epub.git/issues"
   },
   "devDependencies": {
     "standard": "^17.0.0"
