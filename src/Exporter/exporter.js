@@ -1,6 +1,13 @@
 import EPub from 'epub-gen'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { eventEmitter } from '../Events/event-emitter.js'
 import { exportStarted, ExportStartedEvent } from '../Events/export-started.js'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const templatePath = path.resolve(__dirname, '../templates')
 
 /**
  * @typedef {Object} EpubChapter
@@ -31,6 +38,8 @@ export class Exporter {
       cover: await book.loadCover(assetDownloader),
       appendChapterTitles: true,
       content: await this.buildContent(book),
+      css: fs.readFileSync(path.resolve(templatePath, 'styles.css')),
+      customNcxTocTemplatePath: path.resolve(templatePath, 'toc.ncx.ejs'),
       ...extraOptions
     }
 
