@@ -8,7 +8,7 @@ import { eventEmitter } from '../Events/event-emitter.js'
 import { TempDirectoryCreated, tempDirectoryCreated } from '../Events/temp-directory-created.js'
 
 /**
- * @property tempDirPath
+ * @property {string} tempDirPath
  */
 export class AssetDownloader {
   /**
@@ -22,26 +22,48 @@ export class AssetDownloader {
   /**
    * @param {Page} page
    * @param {string} selector
-   * @returns {string[]} file paths
+   * @returns {Array.<string>} file paths
    */
   async fetchImagesFromQuery (page, selector) {
-    const urls = await page.$$eval(selector, (images) =>
-      images.map((image) => image.getAttribute('src'))
+    const urls = await page.$$eval(
+      selector,
+      (images, tempDirPath) =>
+        images.map((image) => {
+          const url = image.getAttribute('src')
+          if (!url) {
+            return [undefined, undefined]
+          }
+
+          const filePath = tempDirPath + '/' + new URL(url).pathname.replace(/^\//, '')
+          image.setAttribute('src', filePath)
+          return [url, filePath]
+        }),
+      this.tempDirPath
     )
 
     return Parallel.map(
-      urls.filter((url) => !!url),
-      async (url) => [url, await this.download(new URL(url))]
+      urls.filter(([url, _]) => !!url),
+      async ([url, filePath]) => {
+        await this.download(new URL(url), filePath)
+        return [url, filePath]
+      }
     )
   }
 
   /**
    * @param {URL} url
+   * @returns {string}
+   */
+  mapFilePath (url) {
+    return path.resolve(this.tempDirPath, url.pathname.replace(/^\//, ''))
+  }
+
+  /**
+   * @param {URL} url
+   * @param {string} filePath
    * @returns {Promise<string>} file path
    */
-  async download (url) {
-    const tmpDir = await this.tempDirPath
-    const filePath = path.resolve(tmpDir, url.pathname.replace(/^\//, ''))
+  async download (url, filePath) {
     const dirName = path.dirname(filePath)
     if (!fs.existsSync(dirName)) {
       fs.mkdirSync(path.dirname(filePath), { recursive: true })
@@ -79,11 +101,11 @@ export class AssetDownloader {
    * @param {string} slug
    * @returns {Promise<string>}
    */
-  async createTempDir (tempDir, slug) {
+  createTempDir (tempDir, slug) {
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir)
     }
-    const tmpPath = await fs.promises.mkdtemp(path.resolve(tempDir, slug))
+    const tmpPath = fs.mkdtempSync(path.resolve(tempDir, slug))
     eventEmitter.emit(tempDirectoryCreated, new TempDirectoryCreated(tmpPath))
     return tmpPath
   }

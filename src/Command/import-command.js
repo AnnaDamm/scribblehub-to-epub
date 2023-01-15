@@ -6,6 +6,7 @@ import { chapterLoaded } from '../Events/chapter-loaded.js'
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
 import { chapterLoadingStarted } from '../Events/chapter-loading-started.js'
 import { allEvents, eventEmitter } from '../Events/event-emitter.js'
+import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { AssetDownloader } from '../ScribbleHub/asset-downloader.js'
 import { Book } from '../ScribbleHub/book.js'
@@ -17,7 +18,6 @@ import { Verbosity } from './constants.js'
  * @property {number} verbose
  * @property {boolean} quiet
  * @property {boolean} progress
- * @property {string} tmpDir
  */
 
 /**
@@ -61,10 +61,15 @@ export class ImportCommand extends Command {
 
     this.addOutputEventHandlers()
 
+    const exporter = new Exporter()
     const book = new Book(new URL(urlString))
 
-    await this.prepareFileHandle(book)
-    await this.loadChapters(book)
+    this.outFile = this.prepareOutFile(book)
+
+    const bookMetadata = await book.getBookMetaData()
+    const assetDownloader = new AssetDownloader(this.options.tmpDir, bookMetadata.slug)
+    await book.loadChapters(assetDownloader)
+    await exporter.export(assetDownloader, book, this.outFile)
 
     await Browser.close()
   }
@@ -91,19 +96,6 @@ export class ImportCommand extends Command {
   }
 
   /**
-   * @param {Book} book
-   * @returns {Promise<Chapter[]>}
-   */
-  async loadChapters (book) {
-    const assetDownloader = new AssetDownloader(this.options.tmpDir, (await book.getBookMetaData()).slug)
-
-    await Promise.all([
-      book.loadImage(assetDownloader),
-      book.loadChapters(assetDownloader)
-    ])
-  }
-
-  /**
    * @returns {void}
    */
   addOutputEventHandlers () {
@@ -113,7 +105,6 @@ export class ImportCommand extends Command {
 
     if (this.options.progress) {
       const chapterProgressBar = new SingleBar({
-        etaAsynchronousUpdate: true,
         format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n\n' : '')
       })
       eventEmitter.addListener(chapterLoadingStarted,
@@ -136,10 +127,10 @@ export class ImportCommand extends Command {
 
   /**
    * @param {Book} book
-   * @returns {Promise<void>}
+   * @returns {string}
    */
-  async prepareFileHandle (book) {
-    await OutFile.prepareDirectory(this.outFile, async () => (await book.getBookMetaData()).slug, this.options.overwrite)
+  prepareOutFile (book) {
+    return OutFile.prepareOutFile(this.outFile, async () => (await book.getBookMetaData()).slug, this.options.overwrite)
   }
 
   /**

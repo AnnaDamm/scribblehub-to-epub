@@ -18,6 +18,11 @@ export class Chapter {
     await page.goto(url.toString())
     await page.waitForSelector('body')
     await Parallel.invoke([
+      async () => {
+        this.id = await page.$eval('link[rel="shortlink"]',
+          (node) => parseInt(node.getAttribute('href').match(/\?p=(?<id>\d+)$/).groups.id, 10)
+        )
+      },
       async () => { this.title = await page.$eval('.chapter-title', (node) => node.innerHTML) },
       async () => { this.text = await page.$eval('#chp_contents', (node) => node.innerHTML) },
       async () => assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')

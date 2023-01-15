@@ -9,9 +9,9 @@ class OutFileSingleton {
    * @param {string} outFile
    * @param {function(): Promise<string>} fallbackNameFunction
    * @param {boolean|undefined} overwrite
-   * @returns {Promise<number>}
+   * @returns {string}
    */
-  async prepareDirectory (outFile, fallbackNameFunction, overwrite) {
+  async prepareOutFile (outFile, fallbackNameFunction, overwrite) {
     if (outFile === undefined) {
       outFile = (await fallbackNameFunction()) + defaultExtension
     }
@@ -22,11 +22,7 @@ class OutFileSingleton {
       throw new Error('Not overwriting existing file. aborting.')
     }
 
-    try {
-      return fs.openSync(outFile, 'w')
-    } catch {
-      throw new Error(`Cannot write into ${outFile}`)
-    }
+    return outFile
   }
 
   /**

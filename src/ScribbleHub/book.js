@@ -25,9 +25,12 @@ export class Book {
    */
   async getBookMetaData () {
     if (this._bookMetaData === undefined) {
-      this._bookMetaData = new BookMetadata()
-      await this._bookMetaData.load(await this.getPage())
-      eventEmitter.emit(mainPageLoaded, new MainPageLoaded(this))
+      this._bookMetaData = new Promise(async (resolve) => {
+        const bookMetadata = new BookMetadata()
+        await bookMetadata.load(await this.getPage())
+        eventEmitter.emit(mainPageLoaded, new MainPageLoaded(this))
+        resolve(bookMetadata)
+      })
     }
     return this._bookMetaData
   }
@@ -37,9 +40,12 @@ export class Book {
    */
   async getPage () {
     if (this._page === undefined) {
-      this._page = await Browser.newPage()
-      await this._page.goto(this.url.toString())
-      await this._page.waitForSelector('body')
+      this._page = new Promise(async (resolve) => {
+        const page = await Browser.newPage()
+        await page.goto(this.url.toString())
+        await page.waitForSelector('body')
+        resolve(page)
+      })
     }
 
     return this._page
@@ -47,11 +53,13 @@ export class Book {
 
   /**
    * @param {AssetDownloader} assetDownloader
-   * @returns {Promise<void>}
+   * @returns {Promise<string>}
    */
-  async loadImage (assetDownloader) {
+  async loadCover (assetDownloader) {
     const bookMetaData = await this.getBookMetaData()
-    await assetDownloader.download(bookMetaData.titleImageUrl)
+    const filePath = assetDownloader.mapFilePath(bookMetaData.cover)
+    await assetDownloader.download(bookMetaData.cover, filePath)
+    return filePath
   }
 
   /**
@@ -60,15 +68,24 @@ export class Book {
    */
   async loadChapters (assetDownloader) {
     if (this._chapters === undefined) {
-      const chapterUrls = (await this.getChapterUrls())
-      eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
+      this._chapters = new Promise(async(resolve) => {
+        const chapterUrls = (await this.getChapterUrls())
+          .slice(0, 3)
+        eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 
-      this._chapters = Parallel.map(
-        chapterUrls,
-        async (url) => await new Chapter().load(assetDownloader, url),
-        { concurrency: 5 }
-      ).then((chapters) => {
-        eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
+        const chapters = Parallel.map(
+          chapterUrls,
+          async (url) => {
+            const chapter = new Chapter()
+            await chapter.load(assetDownloader, url)
+            return chapter
+          },
+          { concurrency: 5 }
+        )
+        chapters.then((chapters) => {
+          eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
+        })
+        resolve(chapters)
       })
     }
 
