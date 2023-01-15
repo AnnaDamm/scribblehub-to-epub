@@ -49,10 +49,8 @@ export class Book {
     if (this._chapters === undefined) {
       const chapterUrls = await this.getChapterUrls()
 
-      /** @type {PromiseThrottle<Chapter>}*/
       const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5,           // up to 1 request per second
-        promiseImplementation: Promise  // the Promise library you are using
+        requestsPerSecond: 5,
       })
       eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
       const chapters = Array(chapterUrls.length)
