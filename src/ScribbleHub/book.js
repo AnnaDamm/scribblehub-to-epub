@@ -39,15 +39,26 @@ export class Book {
     if (this._page === undefined) {
       this._page = await Browser.newPage()
       await this._page.goto(this.url.toString())
+      await this._page.waitForSelector('body')
     }
 
     return this._page
   }
 
   /**
+   * @param {AssetDownloader} assetDownloader
+   * @returns {Promise<void>}
+   */
+  async loadImage (assetDownloader) {
+    const bookMetaData = await this.getBookMetaData()
+    await assetDownloader.download(bookMetaData.titleImageUrl)
+  }
+
+  /**
+   * @param {AssetDownloader} assetDownloader
    * @returns {Promise<Chapter[]>}
    */
-  async getChapters () {
+  async loadChapters (assetDownloader) {
     if (this._chapters === undefined) {
       const chapterUrls = (await this.getChapterUrls())
         .slice(0, 3) // todo: only for testing
@@ -58,7 +69,7 @@ export class Book {
       this._chapters = promiseThrottle.addAll(
         chapterUrls.map(
           (url, order) => async () => {
-            chapters[order] = await new Chapter().load(url)
+            chapters[order] = await new Chapter().load(assetDownloader, url)
           })
       ).then(() => {
         eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))

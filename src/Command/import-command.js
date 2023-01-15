@@ -1,13 +1,13 @@
 import { SingleBar } from 'cli-progress'
 import { Command } from 'commander'
+import os from 'os'
 import { Browser } from '../Browser/browser.js'
-import { bookMetadataLoaded } from '../Events/book-metadata-loaded.js'
 import { chapterLoaded } from '../Events/chapter-loaded.js'
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
 import { chapterLoadingStarted } from '../Events/chapter-loading-started.js'
-import { eventEmitter } from '../Events/event-emitter.js'
-import { mainPageLoaded } from '../Events/main-page-loaded.js'
+import { allEvents, eventEmitter } from '../Events/event-emitter.js'
 import { OutFile } from '../Exporter/out-file.js'
+import { AssetDownloader } from '../ScribbleHub/asset-downloader.js'
 import { Book } from '../ScribbleHub/book.js'
 import { Verbosity } from './constants.js'
 
@@ -17,6 +17,7 @@ import { Verbosity } from './constants.js'
  * @property {number} verbose
  * @property {boolean} quiet
  * @property {boolean} progress
+ * @property {string} tmpDir
  */
 
 /**
@@ -24,6 +25,7 @@ import { Verbosity } from './constants.js'
  * @property {boolean|undefined} overwrite
  * @property {number} verbosity
  * @property {boolean} progress
+ * @property {string} tmpDir
  */
 /**
  * @property {string} urlString
@@ -42,6 +44,7 @@ export class ImportCommand extends Command {
       .option('-o, --overwrite', 'overwrite the [out-file] if it already exists')
       .option('-O, --no-overwrite', 'do not overwrite the [out-file] if it already exists')
       .option('-P, --no-progress', 'do not show a progress bar')
+      .option('--tmp-dir <dir>', `Temp directory, default: ${os.tmpdir()}`, os.tmpdir())
       .action(this.run)
   }
 
@@ -72,10 +75,13 @@ export class ImportCommand extends Command {
    */
   mapOptions (parsedOptions) {
     const options = {
-      verbosity: parsedOptions.verbose,
-      progress: parsedOptions.progress,
-      overwrite: parsedOptions.overwrite
+      ...parsedOptions,
+      verbosity: parsedOptions.verbose
     }
+    // remove not used options
+    options.verbose = undefined
+    options.quiet = undefined
+
     if (parsedOptions.quiet) {
       options.verbosity = Verbosity.quiet
       options.progress = false
@@ -89,10 +95,12 @@ export class ImportCommand extends Command {
    * @returns {Promise<Chapter[]>}
    */
   async loadChapters (book) {
+    const assetDownloader = new AssetDownloader(this.options.tmpDir, (await book.getBookMetaData()).slug)
 
-    const chapters = await book.getChapters()
-
-    return chapters
+    await Promise.all([
+      book.loadImage(assetDownloader),
+      book.loadChapters(assetDownloader)
+    ])
   }
 
   /**
@@ -100,18 +108,14 @@ export class ImportCommand extends Command {
    */
   addOutputEventHandlers () {
     if (this.options.verbosity >= Verbosity.veryVerbose) {
-      eventEmitter.addListener(mainPageLoaded, (e) => this.write(e.toString()))
-      eventEmitter.addListener(bookMetadataLoaded, (e) => this.write(e.toString()))
-      eventEmitter.addListener(chapterLoadingStarted, (e) => this.write(e.toString()))
-      eventEmitter.addListener(chapterLoaded, (e) => this.write(e.toString()))
-      eventEmitter.addListener(chapterLoadingFinished, (e) => this.write(e.toString()))
+      eventEmitter.addListener(allEvents, (e) => this.write(e.toString()))
     }
 
     if (this.options.progress) {
       const chapterProgressBar = new SingleBar({
         etaAsynchronousUpdate: true,
         format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n' : ''),
-        // clearOnComplete: this.options.verbosity <= Verbosity.veryVerbose
+        clearOnComplete: this.options.verbosity <= Verbosity.veryVerbose
       })
       eventEmitter.addListener(chapterLoadingStarted,
         /** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
@@ -136,12 +140,7 @@ export class ImportCommand extends Command {
    * @returns {Promise<void>}
    */
   async prepareFileHandle (book) {
-    try {
-      await OutFile.prepareFileHandle(this.outFile, async () => (await book.getBookMetaData()).slug, this.options.overwrite)
-    } catch (error) {
-      process.stderr.write(error.toString())
-      process.exit(1)
-    }
+    await OutFile.prepareDirectory(this.outFile, async () => (await book.getBookMetaData()).slug, this.options.overwrite)
   }
 
   /**

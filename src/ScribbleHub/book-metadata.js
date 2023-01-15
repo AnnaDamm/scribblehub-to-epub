@@ -2,10 +2,10 @@ import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../Events/book-meta
 import { eventEmitter } from '../Events/event-emitter.js'
 
 /**
- * @property {string} canonicalUrl
+ * @property {URL} canonicalUrl
  * @property {string} slug
  * @property {string} title
- * @property {string} titleImageUrl
+ * @property {URL} titleImageUrl
  * @property {string} description
  * @property {number} postId
  * @property {number} authorId
@@ -19,11 +19,11 @@ export class BookMetadata {
   async load (page) {
     await Promise.all([
       async () => {
-        this.canonicalUrl = await page.$eval('meta[property="og:url"]', (element) => element.getAttribute('content'))
-        this.slug = this.canonicalUrl.match(/.+\/(?<slug>.+?)\/$/).groups.slug
+        this.canonicalUrl = new URL(await page.$eval('meta[property="og:url"]', (element) => element.getAttribute('content')))
+        this.slug = this.canonicalUrl.toString().match(/.+\/(?<slug>.+?)\/$/).groups.slug
       },
       async () => { this.title = await page.$eval('meta[property="og:title"]', (element) => element.getAttribute('content')) },
-      async () => { this.titleImageUrl = await page.$eval('meta[property="og:image"]', (element) => element.getAttribute('content')) },
+      async () => { this.titleImageUrl = new URL(await page.$eval('meta[property="og:image"]', (element) => element.getAttribute('content'))) },
       async () => { this.description = await page.$eval('meta[property="og:description"]', (element) => element.getAttribute('content')) },
       async () => { this.postId = parseInt(await page.$eval('#mypostid', (element) => element.getAttribute('value')), 10) },
       async () => { this.authorId = parseInt(await page.$eval('#authorid', (element) => element.getAttribute('value')), 10) },
