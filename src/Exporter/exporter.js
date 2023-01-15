@@ -62,6 +62,7 @@ export class Exporter {
    */
   buildDetailsChapter (bookMetadata) {
     return {
+      title: 'Synopsis',
       data: bookMetadata.details,
       filename: 'synopsis.html'
     }
