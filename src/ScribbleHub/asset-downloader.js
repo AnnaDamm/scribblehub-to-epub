@@ -6,6 +6,7 @@ import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../Events/ass
 import { assetDownloadStarted, AssetDownloadStartedEvent } from '../Events/asset-download-started.js'
 import { eventEmitter } from '../Events/event-emitter.js'
 import { TempDirectoryCreated, tempDirectoryCreated } from '../Events/temp-directory-created.js'
+import exitHook from 'async-exit-hook'
 
 /**
  * @property {string} tempDirPath
@@ -17,6 +18,9 @@ export class AssetDownloader {
    */
   constructor (tempDir, slug) {
     this.tempDirPath = this.createTempDir(tempDir, slug)
+    exitHook(() => {
+      fs.rmSync(this.tempDirPath, { recursive: true, maxRetries: 5 })
+    })
   }
 
   /**

@@ -9,7 +9,7 @@ class OutFileSingleton {
    * @param {string} outFile
    * @param {function(): Promise<string>} fallbackNameFunction
    * @param {boolean|undefined} overwrite
-   * @returns {string}
+   * @returns {Promise<string>}
    */
   async prepareOutFile (outFile, fallbackNameFunction, overwrite) {
     if (outFile === undefined) {

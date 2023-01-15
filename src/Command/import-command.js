@@ -64,12 +64,15 @@ export class ImportCommand extends Command {
     const exporter = new Exporter()
     const book = new Book(new URL(urlString))
 
-    this.outFile = this.prepareOutFile(book)
+    const outFilePath = await this.prepareOutFile(book)
 
     const bookMetadata = await book.getBookMetaData()
     const assetDownloader = new AssetDownloader(this.options.tmpDir, bookMetadata.slug)
     await book.loadChapters(assetDownloader)
-    await exporter.export(assetDownloader, book, this.outFile)
+    await exporter.export(assetDownloader, book, outFilePath, {
+      verbose: this.options.verbosity >= Verbosity.verbose,
+      tempDir: this.options.tmpDir
+    })
 
     await Browser.close()
   }
@@ -127,7 +130,7 @@ export class ImportCommand extends Command {
 
   /**
    * @param {Book} book
-   * @returns {string}
+   * @returns {Promise<string>}
    */
   prepareOutFile (book) {
     return OutFile.prepareOutFile(this.outFile, async () => (await book.getBookMetaData()).slug, this.options.overwrite)

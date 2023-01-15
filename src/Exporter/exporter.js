@@ -15,10 +15,11 @@ export class Exporter {
   /**
    * @param {AssetDownloader} assetDownloader
    * @param {Book} book
-   * @param {string} outFile
+   * @param {string} outputFile
+   * @param {Object.<string, any>} extraOptions
    * @returns {Promise<void>}
    */
-  async export (assetDownloader, book, outFile) {
+  async export (assetDownloader, book, outputFile, extraOptions) {
     eventEmitter.emit(exportStarted, new ExportStartedEvent(book))
 
     const bookMetaData = await book.getBookMetaData()
@@ -28,12 +29,12 @@ export class Exporter {
       author: bookMetaData.authorName,
       publisher: bookMetaData.publisher,
       cover: await book.loadCover(assetDownloader),
-      output: outFile,
       appendChapterTitles: true,
-      content: await this.buildContent(book)
+      content: await this.buildContent(book),
+      ...extraOptions
     }
 
-    const epub = new EPub(exportOptions, outFile)
+    const epub = new EPub(exportOptions, outputFile)
     await epub.promise
   }
 
@@ -62,8 +63,6 @@ export class Exporter {
   buildDetailsChapter (bookMetadata) {
     return {
       data: bookMetadata.details,
-      excludeFromToc: true,
-      beforeToc: true,
       filename: 'synopsis.html'
     }
   }

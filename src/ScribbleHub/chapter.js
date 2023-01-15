@@ -17,6 +17,7 @@ export class Chapter {
     const page = await Browser.newPage()
     await page.goto(url.toString())
     await page.waitForSelector('body')
+    await assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')
     await Parallel.invoke([
       async () => {
         this.id = await page.$eval('link[rel="shortlink"]',
@@ -24,8 +25,7 @@ export class Chapter {
         )
       },
       async () => { this.title = await page.$eval('.chapter-title', (node) => node.innerHTML) },
-      async () => { this.text = await page.$eval('#chp_contents', (node) => node.innerHTML) },
-      async () => assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')
+      async () => { this.text = await page.$eval('#chp_raw', (node) => node.innerHTML) },
     ])
     eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(this))
   }

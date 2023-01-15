@@ -26,6 +26,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "async-exit-hook": "^2.0.1",
     "async-parallel": "^1.2.3",
     "cli-progress": "^3.11.2",
     "commander": "^9.5.0",
