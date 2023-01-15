@@ -70,7 +70,6 @@ export class Book {
     if (this._chapters === undefined) {
       this._chapters = new Promise(async(resolve) => {
         const chapterUrls = (await this.getChapterUrls())
-          .slice(0, 3)
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 
         const chapters = Parallel.map(
