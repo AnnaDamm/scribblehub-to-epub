@@ -1,10 +1,11 @@
-import PromiseThrottle from 'promise-throttle'
 import { Browser } from '../Browser/browser.js'
-import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded-event.js'
-import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started-event.js'
+import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
+import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js'
 import { eventEmitter } from '../Events/event-emitter.js'
+import { MainPageLoaded, mainPageLoaded } from '../Events/main-page-loaded.js'
 import { BookMetadata } from './book-metadata.js'
 import { Chapter } from './chapter.js'
+import { promiseThrottle } from './promiseThrottle.js'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
@@ -26,6 +27,7 @@ export class Book {
     if (this._bookMetaData === undefined) {
       this._bookMetaData = new BookMetadata()
       await this._bookMetaData.load(await this.getPage())
+      eventEmitter.emit(mainPageLoaded, new MainPageLoaded(this))
     }
     return this._bookMetaData
   }
@@ -49,21 +51,17 @@ export class Book {
     if (this._chapters === undefined) {
       const chapterUrls = await this.getChapterUrls()
 
-      const promiseThrottle = new PromiseThrottle({
-        requestsPerSecond: 5
-      })
       eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
+
       const chapters = Array(chapterUrls.length)
       this._chapters = promiseThrottle.addAll(
         chapterUrls.map(
           (url, order) => async () => {
-            const chapter = new Chapter()
-            await chapter.load(url)
-            chapters[order] = chapter
-            eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(chapter))
-            return chapter
+            chapters[order] = await new Chapter().load(url)
           })
-      )
+      ).then(() => {
+        eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
+      })
     }
 
     return this._chapters

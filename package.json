@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "run": "node src/index.js",
     "build": "node build.js",

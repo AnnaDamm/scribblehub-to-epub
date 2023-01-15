@@ -1,3 +1,6 @@
+import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../Events/book-metadata-loaded.js'
+import { eventEmitter } from '../Events/event-emitter.js'
+
 /**
  * @property {string} canonicalUrl
  * @property {string} slug
@@ -13,8 +16,8 @@ export class BookMetadata {
    * @param {Page} page
    * @returns {Promise<this>}
    */
-  load (page) {
-    return Promise.all([
+  async load (page) {
+    await Promise.all([
       async () => {
         this.canonicalUrl = await page.$eval('meta[property="og:url"]', (element) => element.getAttribute('content'))
         this.slug = this.canonicalUrl.match(/.+\/(?<slug>.+?)\/$/).groups.slug
@@ -26,5 +29,6 @@ export class BookMetadata {
       async () => { this.authorId = parseInt(await page.$eval('#authorid', (element) => element.getAttribute('value')), 10) },
       async () => { this.authorName = await page.$eval('meta[name="twitter:creator"]', (element) => element.getAttribute('content')) }
     ].map((func) => func()))
+    eventEmitter.emit(bookMetadataLoaded, new BookMetadataLoadedEvent(this))
   }
 }

@@ -21,8 +21,8 @@ const webpackConfig = {
       maxChunks: 1
     }),
     new CompressionPlugin({
-      include: outFileName,
-    }),
+      include: outFileName
+    })
   ],
   optimization: {
     minimize: true,
