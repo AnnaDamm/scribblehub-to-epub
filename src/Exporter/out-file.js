@@ -24,7 +24,9 @@ class OutFileSingleton {
     } else {
       outFile = path.isAbsolute(outFile) ? outFile : path.resolve(process.cwd(), outFile)
     }
-    if (overwrite === false || overwrite === undefined && fs.existsSync(outFile) && !(await this.askForFileOverwrite(outFile))) {
+    if (
+      overwrite === false ||
+      (overwrite === undefined && fs.existsSync(outFile) && !(await this.askForFileOverwrite(outFile)))) {
       throw new Error('Not overwriting existing file. aborting.')
     }
 

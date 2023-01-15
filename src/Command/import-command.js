@@ -51,7 +51,7 @@ export class ImportCommand extends Command {
     })
     eventEmitter.addListener(
       chapterLoadingStarted,
-      /*** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
+      /** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
       (chapterLoadingStarted) => {
         process.stdout.write('Downloading chapters...\n')
         chapterProgressBar.start(chapterLoadingStarted.totalAmount)
