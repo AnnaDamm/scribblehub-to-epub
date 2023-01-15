@@ -49,7 +49,8 @@ export class Book {
    */
   async getChapters () {
     if (this._chapters === undefined) {
-      const chapterUrls = await this.getChapterUrls()
+      const chapterUrls = (await this.getChapterUrls())
+        .slice(0, 3) // todo: only for testing
 
       eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 

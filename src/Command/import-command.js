@@ -9,13 +9,7 @@ import { eventEmitter } from '../Events/event-emitter.js'
 import { mainPageLoaded } from '../Events/main-page-loaded.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { Book } from '../ScribbleHub/book.js'
-
-const Verbosity = {
-  quiet: -1,
-  normal: 0,
-  verbose: 1,
-  veryVerbose: 2
-}
+import { Verbosity } from './constants.js'
 
 /**
  * @typedef {Object} ParsedOptions
@@ -95,9 +89,8 @@ export class ImportCommand extends Command {
    * @returns {Promise<Chapter[]>}
    */
   async loadChapters (book) {
-    this.write('Downloading chapters...')
+
     const chapters = await book.getChapters()
-    this.write('Done.')
 
     return chapters
   }
@@ -113,22 +106,28 @@ export class ImportCommand extends Command {
       eventEmitter.addListener(chapterLoaded, (e) => this.write(e.toString()))
       eventEmitter.addListener(chapterLoadingFinished, (e) => this.write(e.toString()))
     }
-    if (this.options.verbosity >= Verbosity.verbose) {
-      eventEmitter.addListener(mainPageLoaded, () => this.write('main page loaded'))
-      eventEmitter.addListener(bookMetadataLoaded, () => this.write('book meta data loaded'))
-    }
+
     if (this.options.progress) {
       const chapterProgressBar = new SingleBar({
         etaAsynchronousUpdate: true,
-        forceRedraw: false,
-        format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (Verbosity.veryVerbose ? '\n' : '')
+        format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n' : ''),
+        // clearOnComplete: this.options.verbosity <= Verbosity.veryVerbose
       })
-      eventEmitter.once(chapterLoadingStarted,
+      eventEmitter.addListener(chapterLoadingStarted,
         /** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
-        (chapterLoadingStarted) => chapterProgressBar.start(chapterLoadingStarted.totalAmount)
+        (chapterLoadingStarted) => {
+          this.write('Downloading chapters...')
+          chapterProgressBar.start(chapterLoadingStarted.totalAmount)
+        }
       )
       eventEmitter.addListener(chapterLoaded, () => chapterProgressBar.increment())
-      eventEmitter.addListener(chapterLoadingFinished, () => chapterProgressBar.stop())
+      eventEmitter.addListener(chapterLoadingFinished, () => {
+        chapterProgressBar.stop()
+        this.write('Done.')
+      })
+    } else if (this.options.verbosity >= Verbosity.verbose) {
+      eventEmitter.addListener(chapterLoadingStarted, () => this.write('Downloading chapters...'))
+      eventEmitter.addListener(chapterLoadingFinished, () => this.write('Done.'))
     }
   }
 
@@ -150,7 +149,7 @@ export class ImportCommand extends Command {
    * @param {number} verbosity
    * @param {boolean} addNewLine
    */
-  write (string, verbosity = Verbosity.normal, addNewLine = true) {
+  write (string = '', verbosity = Verbosity.normal, addNewLine = true) {
     if (this.options.verbosity >= verbosity) {
       process.stdout.write(string + (addNewLine ? '\n' : ''))
     }
