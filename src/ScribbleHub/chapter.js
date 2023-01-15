@@ -4,7 +4,7 @@
  */
 export class Chapter {
   /**
-   * @param {Url} url
+   * @param {URL} url
    * @returns {Promise<void>}
    */
   async load(url) {}

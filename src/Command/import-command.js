@@ -1,7 +1,11 @@
 import { Command } from 'commander'
 import { Book } from '../ScribbleHub/book.js'
 import { Browser } from '../Browser/browser.js'
-import { OutFile } from '../exporter/out-file.js'
+import { OutFile } from '../Exporter/out-file.js'
+import { SingleBar } from 'cli-progress'
+import { eventEmitter } from '../Events/event-emitter.js'
+import { chapterLoaded } from '../Events/chapter-loaded-event.js'
+import { chapterLoadingStarted } from '../Events/chapter-loading-started-event.js'
 
 export class ImportCommand extends Command {
   constructor () {
@@ -30,9 +34,35 @@ export class ImportCommand extends Command {
     const book = new Book(new URL(urlString))
 
     await this.prepareFileHandle(outFile, book, options.overwrite)
-    const chapters = await book.getChapters()
+    await this.loadChapters(book)
 
     await Browser.close()
+  }
+
+  /**
+   * @param {Book} book
+   * @returns {Promise<Chapter[]>}
+   */
+  async loadChapters (book) {
+    const chapterProgressBar = new SingleBar({
+      etaAsynchronousUpdate: true,
+      forceRedraw: false,
+      format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}'
+    })
+    eventEmitter.addListener(
+      chapterLoadingStarted,
+      /*** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
+      (chapterLoadingStarted) => {
+        process.stdout.write('Downloading chapters...\n')
+        chapterProgressBar.start(chapterLoadingStarted.totalAmount)
+      }
+    )
+    eventEmitter.addListener(chapterLoaded, () => chapterProgressBar.increment())
+    const chapters = await book.getChapters()
+    chapterProgressBar.stop()
+    process.stdout.write('Done in ' + chapterProgressBar.d)
+
+    return chapters
   }
 
   /**

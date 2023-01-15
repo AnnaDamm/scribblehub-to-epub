@@ -1,5 +1,10 @@
 import { Browser } from '../Browser/browser.js'
 import { BookMetadata } from './book-metadata.js'
+import { Chapter } from './chapter.js'
+import PromiseThrottle from 'promise-throttle'
+import { eventEmitter } from '../Events/event-emitter.js'
+import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started-event.js'
+import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded-event.js'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
@@ -43,14 +48,29 @@ export class Book {
   async getChapters () {
     if (this._chapters === undefined) {
       const chapterUrls = await this.getChapterUrls()
-      chapterUrls.forEach((url) => console.log(url.toString()))
 
-      this._chapters = []
+      /** @type {PromiseThrottle<Chapter>}*/
+      const promiseThrottle = new PromiseThrottle({
+        requestsPerSecond: 5,           // up to 1 request per second
+        promiseImplementation: Promise  // the Promise library you are using
+      })
+      eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
+      const chapters = Array(chapterUrls.length)
+      this._chapters = promiseThrottle.addAll(
+        chapterUrls.map(
+          (url, order) => async () => {
+            const chapter = new Chapter()
+            await chapter.load(url)
+            chapters[order] = chapter
+            eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(chapter))
+            return chapter
+          })
+      )
     }
 
     return this._chapters
   }
-  //
+
   /**
    * @private
    * @returns {Promise<URL[]>}
