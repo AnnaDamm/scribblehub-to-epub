@@ -1,11 +1,11 @@
-import { Command } from 'commander'
-import { Book } from '../ScribbleHub/book.js'
-import { Browser } from '../Browser/browser.js'
-import { OutFile } from '../Exporter/out-file.js'
 import { SingleBar } from 'cli-progress'
-import { eventEmitter } from '../Events/event-emitter.js'
+import { Command } from 'commander'
+import { Browser } from '../Browser/browser.js'
 import { chapterLoaded } from '../Events/chapter-loaded-event.js'
 import { chapterLoadingStarted } from '../Events/chapter-loading-started-event.js'
+import { eventEmitter } from '../Events/event-emitter.js'
+import { OutFile } from '../Exporter/out-file.js'
+import { Book } from '../ScribbleHub/book.js'
 
 export class ImportCommand extends Command {
   constructor () {
@@ -60,7 +60,7 @@ export class ImportCommand extends Command {
     eventEmitter.addListener(chapterLoaded, () => chapterProgressBar.increment())
     const chapters = await book.getChapters()
     chapterProgressBar.stop()
-    process.stdout.write('Done in ' + chapterProgressBar.d)
+    process.stdout.write('Done.')
 
     return chapters
   }

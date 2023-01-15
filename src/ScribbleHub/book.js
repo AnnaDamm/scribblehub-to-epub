@@ -1,10 +1,10 @@
+import PromiseThrottle from 'promise-throttle'
 import { Browser } from '../Browser/browser.js'
+import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded-event.js'
+import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started-event.js'
+import { eventEmitter } from '../Events/event-emitter.js'
 import { BookMetadata } from './book-metadata.js'
 import { Chapter } from './chapter.js'
-import PromiseThrottle from 'promise-throttle'
-import { eventEmitter } from '../Events/event-emitter.js'
-import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started-event.js'
-import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded-event.js'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
