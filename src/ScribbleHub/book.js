@@ -1,3 +1,4 @@
+import * as Parallel from 'async-parallel'
 import { Browser } from '../Browser/browser.js'
 import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
 import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js'
@@ -5,7 +6,6 @@ import { eventEmitter } from '../Events/event-emitter.js'
 import { MainPageLoaded, mainPageLoaded } from '../Events/main-page-loaded.js'
 import { BookMetadata } from './book-metadata.js'
 import { Chapter } from './chapter.js'
-import { promiseThrottle } from './promiseThrottle.js'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
@@ -61,17 +61,13 @@ export class Book {
   async loadChapters (assetDownloader) {
     if (this._chapters === undefined) {
       const chapterUrls = (await this.getChapterUrls())
-        .slice(0, 3) // todo: only for testing
-
       eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 
-      const chapters = Array(chapterUrls.length)
-      this._chapters = promiseThrottle.addAll(
-        chapterUrls.map(
-          (url, order) => async () => {
-            chapters[order] = await new Chapter().load(assetDownloader, url)
-          })
-      ).then(() => {
+      this._chapters = Parallel.map(
+        chapterUrls,
+        async (url) => await new Chapter().load(assetDownloader, url),
+        { concurrency: 5 }
+      ).then((chapters) => {
         eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
       })
     }
@@ -84,14 +80,21 @@ export class Book {
    * @returns {Promise<URL[]>}
    */
   async getChapterUrls () {
-    const page = await Browser.newPage()
-    const response = await Browser.sendPostRequest(page, this.url.origin + allChaptersPath, new URLSearchParams({
-      action: 'wi_getreleases_pagination',
-      pagenum: -1,
-      mypostid: (await this.getBookMetaData()).postId
-    }).toString())
-    await page.setContent(await response.text())
+    const response = await fetch(
+      this.url.origin + allChaptersPath,
+      {
+        method: 'POST',
+        body: new URLSearchParams({
+          action: 'wi_getreleases_pagination',
+          pagenum: -1,
+          mypostid: (await this.getBookMetaData()).postId
+        })
+      }
+    )
+    const responseText = await response.text()
 
+    const page = await Browser.newPage()
+    await page.setContent(responseText)
     const urlStrings = await page.$$eval(
       '.toc_w',
       (chapterNodes) =>

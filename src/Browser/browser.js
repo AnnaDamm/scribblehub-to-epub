@@ -34,31 +34,6 @@ class BrowserSingleton {
 
   /**
    * @param {Page} page
-   * @param {string} url
-   * @param {string} postData
-   * @param {Object.<string, string>} headers
-   * @returns {Promise<Response>}
-   */
-  async sendPostRequest (page, url, postData, headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }) {
-    await page.setRequestInterception(true)
-
-    page.on('request', (interceptedRequest) => {
-      interceptedRequest.continue({
-        method: 'POST',
-        postData,
-        headers: {
-          ...interceptedRequest.headers(),
-          ...headers
-        }
-      })
-    })
-    return await page.goto(url)
-  }
-
-  /**
-   * @param {Page} page
    */
   addConsoleLog (page) {
     page.on('console', async (msg) => {

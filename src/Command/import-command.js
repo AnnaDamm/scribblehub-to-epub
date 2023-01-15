@@ -114,8 +114,7 @@ export class ImportCommand extends Command {
     if (this.options.progress) {
       const chapterProgressBar = new SingleBar({
         etaAsynchronousUpdate: true,
-        format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n' : ''),
-        clearOnComplete: this.options.verbosity <= Verbosity.veryVerbose
+        format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n\n' : '')
       })
       eventEmitter.addListener(chapterLoadingStarted,
         /** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */

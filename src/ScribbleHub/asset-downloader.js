@@ -1,3 +1,4 @@
+import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import stream from 'stream'
@@ -27,10 +28,10 @@ export class AssetDownloader {
     const urls = await page.$$eval(selector, (images) =>
       images.map((image) => image.getAttribute('src'))
     )
-    return Promise.all(
-      urls
-        .filter((url) => !!url)
-        .map(async (url) => [url, await this.download(new URL(url))])
+
+    return Parallel.map(
+      urls.filter((url) => !!url),
+      async (url) => [url, await this.download(new URL(url))]
     )
   }
 

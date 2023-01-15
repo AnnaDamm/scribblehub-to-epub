@@ -1,3 +1,4 @@
+import * as Parallel from 'async-parallel'
 import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../Events/book-metadata-loaded.js'
 import { eventEmitter } from '../Events/event-emitter.js'
 
@@ -17,7 +18,7 @@ export class BookMetadata {
    * @returns {Promise<this>}
    */
   async load (page) {
-    await Promise.all([
+    await Parallel.invoke([
       async () => {
         this.canonicalUrl = new URL(await page.$eval('meta[property="og:url"]', (element) => element.getAttribute('content')))
         this.slug = this.canonicalUrl.toString().match(/.+\/(?<slug>.+?)\/$/).groups.slug
@@ -28,7 +29,7 @@ export class BookMetadata {
       async () => { this.postId = parseInt(await page.$eval('#mypostid', (element) => element.getAttribute('value')), 10) },
       async () => { this.authorId = parseInt(await page.$eval('#authorid', (element) => element.getAttribute('value')), 10) },
       async () => { this.authorName = await page.$eval('meta[name="twitter:creator"]', (element) => element.getAttribute('content')) }
-    ].map((func) => func()))
+    ])
     eventEmitter.emit(bookMetadataLoaded, new BookMetadataLoadedEvent(this))
   }
 }
