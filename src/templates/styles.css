@@ -152,3 +152,7 @@ i.fa {
 .fa-exclamation-triangle::before {
     content: '⚠'
 }
+
+.sp-body {
+    display: block !important;
+}

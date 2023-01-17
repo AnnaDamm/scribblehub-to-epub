@@ -5,8 +5,8 @@ import { fileURLToPath } from 'url'
 import { eventEmitter } from '../Events/event-emitter.js'
 import { exportStarted, ExportStartedEvent } from '../Events/export-started.js'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const templatePath = path.resolve(__dirname, '../templates')
 
 /**

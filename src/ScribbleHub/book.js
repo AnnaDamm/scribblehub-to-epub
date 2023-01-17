@@ -68,7 +68,7 @@ export class Book {
    */
   async loadChapters (assetDownloader) {
     if (this._chapters === undefined) {
-      this._chapters = new Promise(async(resolve) => {
+      this._chapters = new Promise(async (resolve) => {
         const chapterUrls = (await this.getChapterUrls())
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 
