@@ -25,12 +25,12 @@ export class Book {
    */
   async getBookMetaData () {
     if (this._bookMetaData === undefined) {
-      this._bookMetaData = new Promise(async (resolve) => {
+      this._bookMetaData = (async () => {
         const bookMetadata = new BookMetadata()
         await bookMetadata.load(await this.getPage())
         eventEmitter.emit(mainPageLoaded, new MainPageLoaded(this))
-        resolve(bookMetadata)
-      })
+        return bookMetadata
+      })()
     }
     return this._bookMetaData
   }
@@ -40,12 +40,12 @@ export class Book {
    */
   async getPage () {
     if (this._page === undefined) {
-      this._page = new Promise(async (resolve) => {
+      this._page = (async () => {
         const page = await Browser.newPage()
         await page.goto(this.url.toString())
         await page.waitForSelector('body')
-        resolve(page)
-      })
+        return page
+      })()
     }
 
     return this._page
@@ -68,7 +68,7 @@ export class Book {
    */
   async loadChapters (assetDownloader) {
     if (this._chapters === undefined) {
-      this._chapters = new Promise(async (resolve) => {
+      this._chapters = (async () => {
         const chapterUrls = (await this.getChapterUrls())
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 
@@ -84,8 +84,8 @@ export class Book {
         chapters.then((chapters) => {
           eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
         })
-        resolve(chapters)
-      })
+        return chapters
+      })()
     }
 
     return this._chapters
