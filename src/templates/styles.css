@@ -53,7 +53,7 @@ span[property="genre"]:last-child {
     content: '⚠'
 }
 
-.wi_news, .sp-wrap {
+.wi_news, .sp-wrap, .wi_authornotes {
     border: 2px solid black;
     padding: 1em;
 }
@@ -93,22 +93,13 @@ span[property="genre"]:last-child {
     position: relative
 }
 
-.an_username {
-    padding-left: 10px
-}
-
 .an_username a {
     font-weight: 600;
-    color: #333
 }
 
 .wi_authornotes_body {
     padding-top: 10px;
     color: #333
-}
-
-.an_username a:hover {
-    color: #fc4349
 }
 
 blockquote {
