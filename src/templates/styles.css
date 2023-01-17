@@ -49,14 +49,104 @@ span[property="genre"]:last-child {
     margin-bottom: 10px;
 }
 
-.wi_novel_title, .wi_news_title {
+.sp-head::before {
+    content: '⚠'
+}
+
+.wi_news, .sp-wrap {
+    border: 2px solid black;
+    padding: 1em;
+}
+
+.wi_novel_title, .wi_news_title, .sp-head {
+    background-color: #065992;
     margin-top: 10px;
     margin-bottom: 10px;
     font-size: 1.3em;
     font-weight: bold;
 }
 
-.wi_news {
-    border: 2px solid black;
-    padding: 1em;
+.wi_authornotes:before {
+    content: "\201C";
+    color: #001018;
+    font-size: 4em;
+    position: absolute;
+    left: 10px;
+    top: -10px
+}
+
+.wi_authornotes:after {
+    content: "\201D";
+    color: #001018;
+    font-size: 4em;
+    position: absolute;
+    bottom: -45px;
+    right: 10px
+}
+
+.wi_authornotes {
+    padding: 15px 35px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    position: relative
+}
+
+.an_username {
+    padding-left: 10px
+}
+
+.an_username a {
+    font-weight: 600;
+    color: #333
+}
+
+.wi_authornotes_body {
+    padding-top: 10px;
+    color: #333
+}
+
+.an_username a:hover {
+    color: #fc4349
+}
+
+blockquote {
+    margin: 20px auto;
+    color: #555;
+    padding: 1.2em 30px 1.2em 75px;
+    border-left: 8px solid #333;
+    line-height: 1.6;
+    position: relative;
+    background: #f2f2f2
+}
+
+blockquote::before {
+    content: "\201C";
+    color: #333;
+    font-size: 4em;
+    position: absolute;
+    left: 10px;
+    top: -10px
+}
+
+blockquote::after {
+    content: ''
+}
+
+blockquote span {
+    display: block;
+    color: #333;
+    font-style: normal;
+    margin-top: 1em
+}
+
+.spdiv {
+    display: none;
+}
+
+i.fa {
+    font-style: normal;
+}
+
+.fa-exclamation-triangle::before {
+    content: '⚠'
 }

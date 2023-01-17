@@ -26,7 +26,7 @@ export class AssetDownloader {
   /**
    * @param {Page} page
    * @param {string} selector
-   * @returns {Array.<string>} file paths
+   * @returns {Promise<Array.<string>>} file paths
    */
   async fetchImagesFromQuery (page, selector) {
     const urls = await page.$$eval(

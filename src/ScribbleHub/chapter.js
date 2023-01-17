@@ -25,7 +25,10 @@ export class Chapter {
         )
       },
       async () => { this.title = await page.$eval('.chapter-title', (node) => node.innerHTML) },
-      async () => { this.text = await page.$eval('#chp_raw', (node) => node.innerHTML) },
+      async () => {
+          await page.$$eval('[class^="ad_"]', (nodes) => nodes.forEach((node) => node.remove()))
+          this.text = await page.$eval('#chp_raw', (node) => node.innerHTML)
+      },
     ])
     eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(this))
   }
