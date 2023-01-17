@@ -67,6 +67,7 @@ span[property="genre"]:last-child {
 }
 
 .wi_authornotes:before {
+    font-family: sans-serif;
     content: "\201C";
     color: #001018;
     font-size: 4em;
@@ -76,6 +77,7 @@ span[property="genre"]:last-child {
 }
 
 .wi_authornotes:after {
+    font-family: sans-serif;
     content: "\201D";
     color: #001018;
     font-size: 4em;
