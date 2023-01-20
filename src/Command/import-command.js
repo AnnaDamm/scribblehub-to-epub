@@ -37,7 +37,7 @@ export class ImportCommand extends Command {
     super('scribble-to-epub')
     this
       .description('Downloads a book from scribblehub.com and outputs it as an epub file')
-      .argument('<url>', 'base url of the Scribble Hub series')
+      .argument('<url>', 'base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"')
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
       .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (dummyValue, previous) => previous + 1, 0)
       .option('-q, --quiet', 'do not output anything', false)
