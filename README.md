@@ -30,10 +30,10 @@ Options:
 ```
 
 ## Report bugs and feature requests
-Report any bugs and feature requests on [Github Issues](https://github.com/AnnaDamm/scribblehub-to-epub/issues)
+Report any bugs and feature requests on [GitHub Issues](https://github.com/AnnaDamm/scribblehub-to-epub/issues)
 
 ## Contribute
-Clone github and install dependencies:
+Clone GitHub and install dependencies:
 ```bash
 git clone https://github.com/AnnaDamm/scribblehub-to-epub.git
 cd scribblehub-to-epub
