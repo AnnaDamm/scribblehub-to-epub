@@ -13,7 +13,7 @@ e.g: `https://www.scribblehub.com/series/36420/the-fastest-man-alive/`.
 npm run run <scribblehub-url>
 ```
 
-### All CLI Parameters:
+### All CLI Parameters
 ```bash
 Arguments:
   url                 base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"

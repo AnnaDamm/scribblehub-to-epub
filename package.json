@@ -42,6 +42,9 @@
     "standard": "^17.0.0"
   },
   "bin": "src/index.js",
+  "files": [
+    "src"
+  ],
   "standard": {
     "ignore": [
       "dist"
