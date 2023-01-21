@@ -1,5 +1,5 @@
 {
-  "name": "scribblehub-to-epub",
+  "name": "@annadamm/scribblehub-to-epub",
   "version": "0.0.1",
   "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
   "main": "src/index.js",
@@ -43,6 +43,7 @@
   },
   "bin": "src/index.js",
   "files": [
+    "assets",
     "src"
   ],
   "standard": {

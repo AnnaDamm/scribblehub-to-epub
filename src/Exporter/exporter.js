@@ -7,7 +7,7 @@ import { exportStarted, ExportStartedEvent } from '../Events/export-started.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const templatePath = path.resolve(__dirname, '../templates')
+const assetPath = path.resolve(__dirname, '..', '..', 'assets')
 
 /**
  * @typedef {Object} EpubChapter
@@ -38,8 +38,8 @@ export class Exporter {
       cover: await book.loadCover(assetDownloader),
       appendChapterTitles: true,
       content: await this.buildContent(book),
-      css: fs.readFileSync(path.resolve(templatePath, 'styles.css')),
-      customNcxTocTemplatePath: path.resolve(templatePath, 'toc.ncx.ejs'),
+      css: fs.readFileSync(path.resolve(assetPath, 'styles', 'styles.css')),
+      customNcxTocTemplatePath: path.resolve(assetPath, 'templates', 'toc.ncx.ejs'),
       ...extraOptions
     }
 
