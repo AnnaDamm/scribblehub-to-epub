@@ -3,7 +3,11 @@ This program scrapes a single story of [Scribblehub](https://www.scribblehub.com
 The epub can be read by most ebook readers, such as Kindle.
 
 ## Installation
-TODO
+**This script is only tested with node 19**
+
+```bash
+npm install -g @annadamm/scribblehub-to-epub
+```
 
 ## Usage
 `<scribblehub-url>` refers to the main page of a story, looking like this: `https://www.scribblehub.com/series/<id>/<name>/,`
@@ -15,6 +19,10 @@ npm run run <scribblehub-url>
 
 ### All CLI Parameters
 ```bash
+Usage: scribble-to-epub [options] <url> [out-file]
+
+Downloads a book from scribblehub.com and outputs it as an epub file
+
 Arguments:
   url                 base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"
   out-file            file name of the generated epub, defaults to "dist/<book-url-slug>.epub"
