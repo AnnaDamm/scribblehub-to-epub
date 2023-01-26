@@ -14,6 +14,7 @@ const allChaptersPath = '/wp-admin/admin-ajax.php'
 
 /**
  * @property {URL} url
+ * @property {Promise<Chapter[]>} chapters
  */
 export class Book {
   /**
@@ -68,12 +69,14 @@ export class Book {
   }
 
   /**
+   * @param {number} startWith
+   * @param {number|undefined} endWith
    * @returns {Promise<Chapter[]>}
    */
-  async loadChapters () {
-    if (this._chapters === undefined) {
-      this._chapters = (async () => {
-        const chapterUrls = (await this.getChapterUrls())
+  async loadChapters (startWith, endWith) {
+    if (this.chapters === undefined) {
+      this.chapters = (async () => {
+        const chapterUrls = (await this.getChapterUrls()).slice(startWith - 1, endWith)
 
         const cacheDir = await this.prepareCacheDir()
 
@@ -94,7 +97,7 @@ export class Book {
       })()
     }
 
-    return this._chapters
+    return this.chapters
   }
 
   /**

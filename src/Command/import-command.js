@@ -19,6 +19,8 @@ import { Verbosity } from './constants.js'
  * @property {boolean} progress
  * @property {string} tmpDir
  * @property {string} cacheDir
+ * @property {number} startWith
+ * @property {number|undefined} endWith
  */
 
 /**
@@ -28,6 +30,8 @@ import { Verbosity } from './constants.js'
  * @property {boolean} progress
  * @property {string} tmpDir
  * @property {string} cacheDir
+ * @property {number} startWith
+ * @property {number|undefined} endWith
  */
 /**
  * @property {string} urlString
@@ -48,6 +52,8 @@ export class ImportCommand extends Command {
       .option('-P, --no-progress', 'do not show a progress bar')
       .option('--tmp-dir <dir>', `Temp directory, default: ${this.tmpDir}`, this.tmpDir)
       .option('--cache-dir <dir>', `Cache directory, default: ${this.tmpDir}`, this.tmpDir)
+      .option('--start-with <chapter>', 'Chapter index to start with, default: 1', (value) => parseInt(value, 10), 1)
+      .option('--end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => !!value ? parseInt(value, 10) : undefined, undefined)
       .action(this.run)
   }
 
@@ -69,7 +75,7 @@ export class ImportCommand extends Command {
 
     const outFilePath = await this.prepareOutFile(book)
 
-    await book.loadChapters()
+    await book.loadChapters(options.startWith, options.endWith)
     await exporter.export(book, outFilePath, {
       verbose: this.options.verbosity >= Verbosity.verbose,
       tempDir: this.options.tmpDir
@@ -85,7 +91,7 @@ export class ImportCommand extends Command {
   mapOptions (parsedOptions) {
     const options = {
       ...parsedOptions,
-      verbosity: parsedOptions.verbose
+      verbosity: parsedOptions.verbose,
     }
     // remove not used options
     options.verbose = undefined
@@ -151,7 +157,7 @@ export class ImportCommand extends Command {
   /**
    * @returns {string}
    */
-  get tmpDir() {
+  get tmpDir () {
     return `${os.tmpdir()}/scribblehub-to-epub`
   }
 }

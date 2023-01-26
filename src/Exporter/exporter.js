@@ -55,7 +55,7 @@ export class Exporter {
     const chapters = [
       this.buildDetailsChapter(await book.getBookMetaData())
     ]
-    const bookChapters = await book.loadChapters()
+    const bookChapters = await book.chapters
     for (const chapter of bookChapters) {
       chapters.push(this.buildChapter(chapter))
     }
