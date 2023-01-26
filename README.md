@@ -18,23 +18,27 @@ npm run run <scribblehub-url>
 ```
 
 ### All CLI Parameters
-```bash
+```
 Usage: scribble-to-epub [options] <url> [out-file]
 
 Downloads a book from scribblehub.com and outputs it as an epub file
 
 Arguments:
-  url                 base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"
-  out-file            file name of the generated epub, defaults to "dist/<book-url-slug>.epub"
+  url                         base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"
+  out-file                    file name of the generated epub, defaults to "dist/<book-url-slug>.epub"
 
 Options:
-  -v, --verbose       verbosity that can be increased (-v, -vv, -vvv)
-  -q, --quiet         do not output anything (default: false)
-  -o, --overwrite     overwrite the [out-file] if it already exists
-  -O, --no-overwrite  do not overwrite the [out-file] if it already exists
-  -P, --no-progress   do not show a progress bar
-  --tmp-dir <dir>     Temp directory, default: C:\Users\valys\AppData\Local\Temp (default: "C:\\Users\\valys\\AppData\\Local\\Temp")
-  -h, --help          display help for command
+  -V, --version               output the version number
+  -s, --start-with <chapter>  Chapter index to start with (default: 1)
+  -e, --end-with <chapter>    Chapter index to end with, defaults to the end of the book
+  -o, --overwrite             overwrite the [out-file] if it already exists
+  -O, --no-overwrite          do not overwrite the [out-file] if it already exists
+  -P, --no-progress           do not show a progress bar
+  -v, --verbose               verbosity that can be increased (-v, -vv, -vvv)
+  -q, --quiet                 do not output anything (default: false)
+  --tmp-dir <dir>             Temp directory (default: "/tmp/scribblehub-to-epub")
+  --cache-dir <dir>           Cache directory (default: "./node_modules/.cache/scribblehub-to-epub")
+  -h, --help                  display help for command
 ```
 
 ## Report bugs and feature requests

@@ -1,6 +1,9 @@
 import { SingleBar } from 'cli-progress'
 import { Command } from 'commander'
+import findCacheDirectory from 'find-cache-dir'
+import { createRequire } from 'module'
 import os from 'os'
+import path from 'path'
 import { Browser } from '../Browser/browser.js'
 import { chapterLoaded } from '../Events/chapter-loaded.js'
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
@@ -10,6 +13,10 @@ import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { Book } from '../ScribbleHub/book.js'
 import { Verbosity } from './constants.js'
+
+const require = createRequire(import.meta.url)
+
+const commandName = 'scribblehub-to-epub'
 
 /**
  * @typedef {Object} ParsedOptions
@@ -42,18 +49,23 @@ export class ImportCommand extends Command {
   constructor () {
     super('scribble-to-epub')
     this
+      .version(require('../../package.json').version)
       .description('Downloads a book from scribblehub.com and outputs it as an epub file')
       .argument('<url>', 'base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"')
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
-      .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (dummyValue, previous) => previous + 1, 0)
-      .option('-q, --quiet', 'do not output anything', false)
+
+      .option('-s, --start-with <chapter>', 'Chapter index to start with', (value) => parseInt(value, 10), 1)
+      .option('-e, --end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => !!value ? parseInt(value, 10) : undefined, undefined)
+
       .option('-o, --overwrite', 'overwrite the [out-file] if it already exists')
       .option('-O, --no-overwrite', 'do not overwrite the [out-file] if it already exists')
       .option('-P, --no-progress', 'do not show a progress bar')
-      .option('--tmp-dir <dir>', `Temp directory, default: ${this.tmpDir}`, this.tmpDir)
-      .option('--cache-dir <dir>', `Cache directory, default: ${this.tmpDir}`, this.tmpDir)
-      .option('--start-with <chapter>', 'Chapter index to start with, default: 1', (value) => parseInt(value, 10), 1)
-      .option('--end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => !!value ? parseInt(value, 10) : undefined, undefined)
+
+      .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (dummyValue, previous) => previous + 1, 0)
+      .option('-q, --quiet', 'do not output anything', false)
+
+      .option('--tmp-dir <dir>', 'Temp directory', this.defaultTmpDir)
+      .option('--cache-dir <dir>', 'Cache directory', this.defaultCacheDir)
       .action(this.run)
   }
 
@@ -157,7 +169,14 @@ export class ImportCommand extends Command {
   /**
    * @returns {string}
    */
-  get tmpDir () {
-    return `${os.tmpdir()}/scribblehub-to-epub`
+  get defaultTmpDir () {
+    return path.resolve(os.tmpdir(), commandName)
+  }
+
+  /**
+   * @returns {string}
+   */
+  get defaultCacheDir () {
+    return findCacheDirectory({ name: commandName })
   }
 }

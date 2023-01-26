@@ -26,11 +26,11 @@
   },
   "license": "ISC",
   "dependencies": {
-    "async-exit-hook": "^2.0.1",
     "async-parallel": "^1.2.3",
     "cli-progress": "^3.11.2",
     "commander": "^9.5.0",
     "epub-gen": "^0.1.0",
+    "find-cache-dir": "^4.0.0",
     "puppeteer": "^19.5.0",
     "yesno": "^0.4.0"
   },
