@@ -8,7 +8,6 @@ import { chapterLoadingStarted } from '../Events/chapter-loading-started.js'
 import { allEvents, eventEmitter } from '../Events/event-emitter.js'
 import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
-import { AssetDownloader } from '../ScribbleHub/asset-downloader.js'
 import { Book } from '../ScribbleHub/book.js'
 import { Verbosity } from './constants.js'
 
@@ -18,6 +17,8 @@ import { Verbosity } from './constants.js'
  * @property {number} verbose
  * @property {boolean} quiet
  * @property {boolean} progress
+ * @property {string} tmpDir
+ * @property {string} cacheDir
  */
 
 /**
@@ -26,6 +27,7 @@ import { Verbosity } from './constants.js'
  * @property {number} verbosity
  * @property {boolean} progress
  * @property {string} tmpDir
+ * @property {string} cacheDir
  */
 /**
  * @property {string} urlString
@@ -45,6 +47,7 @@ export class ImportCommand extends Command {
       .option('-O, --no-overwrite', 'do not overwrite the [out-file] if it already exists')
       .option('-P, --no-progress', 'do not show a progress bar')
       .option('--tmp-dir <dir>', `Temp directory, default: ${os.tmpdir()}`, os.tmpdir())
+      .option('--cache-dir <dir>', `Cache directory, default: ${os.tmpdir()}/scribblehub-to-epub`, `${os.tmpdir()}/scribblehub-to-epub`)
       .action(this.run)
   }
 
@@ -62,14 +65,12 @@ export class ImportCommand extends Command {
     this.addOutputEventHandlers()
 
     const exporter = new Exporter()
-    const book = new Book(new URL(urlString))
+    const book = new Book(new URL(urlString), options.cacheDir)
 
     const outFilePath = await this.prepareOutFile(book)
 
-    const bookMetadata = await book.getBookMetaData()
-    const assetDownloader = new AssetDownloader(this.options.tmpDir, bookMetadata.slug)
-    await book.loadChapters(assetDownloader)
-    await exporter.export(assetDownloader, book, outFilePath, {
+    await book.loadChapters()
+    await exporter.export(book, outFilePath, {
       verbose: this.options.verbosity >= Verbosity.verbose,
       tempDir: this.options.tmpDir
     })

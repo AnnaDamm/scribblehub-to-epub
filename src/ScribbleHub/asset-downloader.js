@@ -2,25 +2,17 @@ import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import stream from 'stream'
+import { assetAlreadyDownloaded, AssetAlreadyDownloadedEvent } from '../Events/asset-already-download.js'
 import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../Events/asset-download-finished.js'
 import { assetDownloadStarted, AssetDownloadStartedEvent } from '../Events/asset-download-started.js'
 import { eventEmitter } from '../Events/event-emitter.js'
-import { TempDirectoryCreated, tempDirectoryCreated } from '../Events/temp-directory-created.js'
-import exitHook from 'async-exit-hook'
 
-/**
- * @property {string} tempDirPath
- */
 export class AssetDownloader {
   /**
-   * @param {string} tempDir
-   * @param {string} slug
+   * @param {Promise<string>} cacheDir
    */
-  constructor (tempDir, slug) {
-    this.tempDirPath = this.createTempDir(tempDir, slug)
-    exitHook(() => {
-      fs.rmSync(this.tempDirPath, { recursive: true, maxRetries: 5 })
-    })
+  constructor (cacheDir) {
+    this._cacheDir = cacheDir
   }
 
   /**
@@ -31,18 +23,18 @@ export class AssetDownloader {
   async fetchImagesFromQuery (page, selector) {
     const urls = await page.$$eval(
       selector,
-      (images, tempDirPath) =>
+      (images, cacheDir) =>
         images.map((image) => {
           const url = image.getAttribute('src')
           if (!url) {
             return [undefined, undefined]
           }
 
-          const filePath = tempDirPath + '/' + new URL(url).pathname.replace(/^\//, '')
+          const filePath = cacheDir + '/' + new URL(url).pathname.replace(/^\//, '')
           image.setAttribute('src', filePath)
           return [url, filePath]
         }),
-      this.tempDirPath
+      await this._cacheDir
     )
 
     return Parallel.map(
@@ -56,10 +48,10 @@ export class AssetDownloader {
 
   /**
    * @param {URL} url
-   * @returns {string}
+   * @returns {Promise<string>}
    */
-  mapFilePath (url) {
-    return path.resolve(this.tempDirPath, url.pathname.replace(/^\//, ''))
+  async mapFilePath (url) {
+    return path.resolve(await this._cacheDir, url.pathname.replace(/^\//, ''))
   }
 
   /**
@@ -68,6 +60,11 @@ export class AssetDownloader {
    * @returns {Promise<string>} file path
    */
   async download (url, filePath) {
+    if (fs.existsSync(filePath)) {
+      eventEmitter.emit(assetAlreadyDownloaded, new AssetAlreadyDownloadedEvent(filePath))
+      return filePath
+    }
+
     const dirName = path.dirname(filePath)
     if (!fs.existsSync(dirName)) {
       fs.mkdirSync(path.dirname(filePath), { recursive: true })
@@ -89,28 +86,5 @@ export class AssetDownloader {
     const response = await fetch(url.toString())
     const fileStream = fs.createWriteStream(filePath)
     await stream.promises.finished(stream.Readable.fromWeb(response.body).pipe(fileStream))
-  }
-
-  /**
-   * @param {string} value
-   * @returns {string}
-   * @private
-   */
-  normalizePath (value) {
-    return path.sep === '\\' ? value.replace(/\\/g, '/') : value
-  }
-
-  /**
-   * @param {string} tempDir
-   * @param {string} slug
-   * @returns {Promise<string>}
-   */
-  createTempDir (tempDir, slug) {
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir)
-    }
-    const tmpPath = fs.mkdtempSync(path.resolve(tempDir, slug))
-    eventEmitter.emit(tempDirectoryCreated, new TempDirectoryCreated(tmpPath))
-    return tmpPath
   }
 }

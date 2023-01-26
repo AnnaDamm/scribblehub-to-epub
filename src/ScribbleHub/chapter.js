@@ -1,35 +1,108 @@
 import * as Parallel from 'async-parallel'
+import fs from 'fs'
+import path from 'path'
 import { Browser } from '../Browser/browser.js'
+import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../Events/chapter-loaded-from-cache.js'
 import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded.js'
+import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../Events/chapter-written-to-cache.js'
 import { eventEmitter } from '../Events/event-emitter.js'
 
 /**
+ * @property {URL} url
  * @property {string} title
  * @property {string} text
+ * @property {int} id
  */
 export class Chapter {
+
+  /**
+   * @param {URL} url
+   * @param {string} cacheDir
+   */
+  constructor (url, cacheDir) {
+    this.url = url
+    this._cacheDir = cacheDir
+  }
+
+  /**
+   * @returns {number}
+   */
+  get id () {
+    return parseInt(this.url.pathname.match(/chapter\/(?<id>\d+)\/?/).groups.id)
+  }
+
   /**
    * @param {AssetDownloader} assetDownloader
-   * @param {URL} url
    * @returns {Promise<void>}
    */
-  async load (assetDownloader, url) {
+  async load (assetDownloader) {
+    if (!this._loadFromCache()) {
+      await this._loadFromWeb(assetDownloader)
+      this._writeToCache()
+    }
+
+    eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(this))
+  }
+
+  /**
+   * @param {AssetDownloader} assetDownloader
+   * @returns {Promise<void>}
+   */
+  async _loadFromWeb (assetDownloader) {
     const page = await Browser.newPage()
-    await page.goto(url.toString())
+    await page.goto(this.url.toString())
     await page.waitForSelector('body')
     await assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')
     await Parallel.invoke([
-      async () => {
-        this.id = await page.$eval('link[rel="shortlink"]',
-          (node) => parseInt(node.getAttribute('href').match(/\?p=(?<id>\d+)$/).groups.id, 10)
-        )
-      },
       async () => { this.title = await page.$eval('.chapter-title', (node) => node.innerHTML) },
       async () => {
         await page.$$eval('[class^="ad_"]', (nodes) => nodes.forEach((node) => node.remove()))
         this.text = await page.$eval('#chp_raw', (node) => node.innerHTML)
       }
     ])
-    eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(this))
+  }
+
+  /**
+   * @return {boolean}
+   * @private
+   */
+  _loadFromCache () {
+    if (!fs.existsSync(this._cacheFilePath)) {
+      return false
+    }
+
+    try {
+      const data = JSON.parse(fs.readFileSync(this._cacheFilePath, { encoding: 'utf-8' }))
+
+      this.url = new URL(data.url)
+      this.title = data.title
+      this.text = data.text
+
+      eventEmitter.emit(chapterLoadedFromCache, new ChapterLoadedFromCacheEvent(this))
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * @returns {void}
+   * @private
+   */
+  _writeToCache () {
+    fs.writeFileSync(this._cacheFilePath, JSON.stringify({
+      url: this.url.toString(),
+      title: this.title,
+      text: this.text,
+    }))
+    eventEmitter.emit(chapterWrittenToCache, new ChapterWrittenToCacheEvent(this))
+  }
+
+  /**
+   * @returns {string}
+   * @private
+   */
+  get _cacheFilePath () {
+    return path.resolve(this._cacheDir, this.id + '.json')
   }
 }

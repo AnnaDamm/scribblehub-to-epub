@@ -20,13 +20,12 @@ const assetPath = path.resolve(__dirname, '..', '..', 'assets')
  */
 export class Exporter {
   /**
-   * @param {AssetDownloader} assetDownloader
    * @param {Book} book
    * @param {string} outputFile
    * @param {Object.<string, any>} extraOptions
    * @returns {Promise<void>}
    */
-  async export (assetDownloader, book, outputFile, extraOptions) {
+  async export (book, outputFile, extraOptions) {
     eventEmitter.emit(exportStarted, new ExportStartedEvent(book))
 
     const bookMetaData = await book.getBookMetaData()
@@ -35,7 +34,7 @@ export class Exporter {
       title: bookMetaData.title,
       author: bookMetaData.authorName,
       publisher: bookMetaData.publisher,
-      cover: await book.loadCover(assetDownloader),
+      cover: await book.loadCover(),
       appendChapterTitles: true,
       content: await this.buildContent(book),
       css: fs.readFileSync(path.resolve(assetPath, 'styles', 'styles.css')),

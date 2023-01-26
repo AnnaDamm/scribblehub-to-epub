@@ -1,9 +1,12 @@
 import * as Parallel from 'async-parallel'
+import fs from 'fs'
+import path from 'path'
 import { Browser } from '../Browser/browser.js'
 import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
 import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js'
 import { eventEmitter } from '../Events/event-emitter.js'
 import { MainPageLoaded, mainPageLoaded } from '../Events/main-page-loaded.js'
+import { AssetDownloader } from './asset-downloader.js'
 import { BookMetadata } from './book-metadata.js'
 import { Chapter } from './chapter.js'
 
@@ -15,9 +18,12 @@ const allChaptersPath = '/wp-admin/admin-ajax.php'
 export class Book {
   /**
    * @param {URL} url
+   * @param {string} cacheDir
    */
-  constructor (url) {
+  constructor (url, cacheDir) {
     this.url = url
+    this._cacheDir = cacheDir
+    this._assetDownloader = new AssetDownloader(this.prepareCacheDir())
   }
 
   /**
@@ -52,31 +58,31 @@ export class Book {
   }
 
   /**
-   * @param {AssetDownloader} assetDownloader
    * @returns {Promise<string>}
    */
-  async loadCover (assetDownloader) {
+  async loadCover () {
     const bookMetaData = await this.getBookMetaData()
-    const filePath = assetDownloader.mapFilePath(bookMetaData.cover)
-    await assetDownloader.download(bookMetaData.cover, filePath)
+    const filePath = await this._assetDownloader.mapFilePath(bookMetaData.cover)
+    await this._assetDownloader.download(bookMetaData.cover, filePath)
     return filePath
   }
 
   /**
-   * @param {AssetDownloader} assetDownloader
    * @returns {Promise<Chapter[]>}
    */
-  async loadChapters (assetDownloader) {
+  async loadChapters () {
     if (this._chapters === undefined) {
       this._chapters = (async () => {
         const chapterUrls = (await this.getChapterUrls())
-        eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
 
+        const cacheDir = await this.prepareCacheDir()
+
+        eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
         const chapters = Parallel.map(
           chapterUrls,
           async (url) => {
-            const chapter = new Chapter()
-            await chapter.load(assetDownloader, url)
+            const chapter = new Chapter(url, cacheDir)
+            await chapter.load(this._assetDownloader)
             return chapter
           },
           { concurrency: 5 }
@@ -121,5 +127,16 @@ export class Book {
           .map((chapterNode) => chapterNode.querySelector('.toc_a').getAttribute('href'))
     )
     return urlStrings.map((urlString) => new URL(urlString))
+  }
+
+  /**
+   * @returns {Promise<string>}
+   */
+  async prepareCacheDir () {
+    const directory = path.resolve(this._cacheDir, (await this.getBookMetaData()).slug)
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true })
+    }
+    return directory
   }
 }
