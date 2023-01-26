@@ -2,6 +2,7 @@ import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import { Browser } from '../Browser/browser.js'
+import { fileCache } from '../Cache/file-cache.js'
 import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../Events/chapter-loaded-from-cache.js'
 import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded.js'
 import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../Events/chapter-written-to-cache.js'
@@ -72,7 +73,7 @@ export class Chapter {
     }
 
     try {
-      const data = JSON.parse(fs.readFileSync(this._cacheFilePath, { encoding: 'utf-8' }))
+      const data = JSON.parse(fileCache.readString(this._cacheFilePath))
 
       this.url = new URL(data.url)
       this.title = data.title
@@ -90,7 +91,7 @@ export class Chapter {
    * @private
    */
   _writeToCache () {
-    fs.writeFileSync(this._cacheFilePath, JSON.stringify({
+    fileCache.writeString(this._cacheFilePath, JSON.stringify({
       url: this.url.toString(),
       title: this.title,
       text: this.text,
@@ -103,6 +104,6 @@ export class Chapter {
    * @private
    */
   get _cacheFilePath () {
-    return path.resolve(this._cacheDir, this.id + '.json')
+    return path.resolve(this._cacheDir, this.id + '.json.brotli')
   }
 }
