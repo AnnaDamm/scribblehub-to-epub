@@ -46,8 +46,8 @@ export class ImportCommand extends Command {
       .option('-o, --overwrite', 'overwrite the [out-file] if it already exists')
       .option('-O, --no-overwrite', 'do not overwrite the [out-file] if it already exists')
       .option('-P, --no-progress', 'do not show a progress bar')
-      .option('--tmp-dir <dir>', `Temp directory, default: ${os.tmpdir()}`, os.tmpdir())
-      .option('--cache-dir <dir>', `Cache directory, default: ${os.tmpdir()}/scribblehub-to-epub`, `${os.tmpdir()}/scribblehub-to-epub`)
+      .option('--tmp-dir <dir>', `Temp directory, default: ${this.tmpDir}`, this.tmpDir)
+      .option('--cache-dir <dir>', `Cache directory, default: ${this.tmpDir}`, this.tmpDir)
       .action(this.run)
   }
 
@@ -146,5 +146,12 @@ export class ImportCommand extends Command {
     if (this.options.verbosity >= verbosity) {
       process.stdout.write(string + (addNewLine ? '\n' : ''))
     }
+  }
+
+  /**
+   * @returns {string}
+   */
+  get tmpDir() {
+    return `${os.tmpdir()}/scribblehub-to-epub`
   }
 }
