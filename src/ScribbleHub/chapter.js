@@ -15,7 +15,6 @@ import { eventEmitter } from '../Events/event-emitter.js'
  * @property {int} id
  */
 export class Chapter {
-
   /**
    * @param {URL} url
    * @param {string} cacheDir
@@ -94,7 +93,7 @@ export class Chapter {
     fileCache.writeString(this._cacheFilePath, JSON.stringify({
       url: this.url.toString(),
       title: this.title,
-      text: this.text,
+      text: this.text
     }))
     eventEmitter.emit(chapterWrittenToCache, new ChapterWrittenToCacheEvent(this))
   }

@@ -55,7 +55,7 @@ export class ImportCommand extends Command {
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
 
       .option('-s, --start-with <chapter>', 'Chapter index to start with', (value) => parseInt(value, 10), 1)
-      .option('-e, --end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => !!value ? parseInt(value, 10) : undefined, undefined)
+      .option('-e, --end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => value ? parseInt(value, 10) : undefined, undefined)
 
       .option('-o, --overwrite', 'overwrite the [out-file] if it already exists')
       .option('-O, --no-overwrite', 'do not overwrite the [out-file] if it already exists')
@@ -103,7 +103,7 @@ export class ImportCommand extends Command {
   mapOptions (parsedOptions) {
     const options = {
       ...parsedOptions,
-      verbosity: parsedOptions.verbose,
+      verbosity: parsedOptions.verbose
     }
     // remove not used options
     options.verbose = undefined
