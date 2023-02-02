@@ -64,19 +64,6 @@
       "dist"
     ]
   },
-  "stylelint": {
-    "extends": "stylelint-config-standard",
-    "overrides": [
-      {
-        "files": [
-          "assets/styles/scribblehub.css"
-        ],
-        "rules": {
-          "selector-class-pattern": null
-        }
-      }
-    ]
-  },
   "pre-commit": [
     "lint:fix"
   ]
