@@ -14,12 +14,14 @@ npm install -g @annadamm/scribblehub-to-epub
 
 ## Usage
 
+```bash
+scribblehub-to-epub <scribblehub-url>
+# get all available options:
+scribblehub-to-epub --help
+```
+
 `<scribblehub-url>` refers to the main page of a story, looking like this: `https://www.scribblehub.com/series/<id>/<name>/,`
 e.g: `https://www.scribblehub.com/series/36420/the-fastest-man-alive/`.
-
-```bash
-npm run run <scribblehub-url>
-```
 
 ### All CLI Parameters
 
