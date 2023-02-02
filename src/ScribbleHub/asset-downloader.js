@@ -31,7 +31,7 @@ export class AssetDownloader {
           }
 
           const filePath = cacheDir + '/' + new URL(url).pathname.replace(/^\//, '')
-          image.setAttribute('src', filePath)
+          image.setAttribute('src', 'file://' + filePath)
           return [url, filePath]
         }),
       await this._cacheDir

@@ -16,6 +16,10 @@ class OutFileSingleton {
       outFile = (await fallbackNameFunction()) + defaultExtension
     }
     outFile = path.isAbsolute(outFile) ? outFile : path.resolve(process.cwd(), outFile)
+    const directory = path.dirname(outFile)
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true })
+    }
     if (
       overwrite === false ||
       (overwrite === undefined && fs.existsSync(outFile) && !(await this.askForFileOverwrite(outFile)))) {

@@ -2,8 +2,6 @@ import { SingleBar } from 'cli-progress'
 import { Command } from 'commander'
 import findCacheDirectory from 'find-cache-dir'
 import { createRequire } from 'module'
-import os from 'os'
-import path from 'path'
 import { Browser } from '../Browser/browser.js'
 import { chapterLoaded } from '../Events/chapter-loaded.js'
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
@@ -13,8 +11,11 @@ import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { Book } from '../ScribbleHub/book.js'
 import { Verbosity } from './constants.js'
+import { parseSemVer } from 'semver-parser'
+import * as path from 'path'
 
 const require = createRequire(import.meta.url)
+const packageJson = require('../../package.json')
 
 const commandName = 'scribblehub-to-epub'
 
@@ -24,7 +25,6 @@ const commandName = 'scribblehub-to-epub'
  * @property {number} verbose
  * @property {boolean} quiet
  * @property {boolean} progress
- * @property {string} tmpDir
  * @property {string} cacheDir
  * @property {number} startWith
  * @property {number|undefined} endWith
@@ -35,7 +35,6 @@ const commandName = 'scribblehub-to-epub'
  * @property {boolean|undefined} overwrite
  * @property {number} verbosity
  * @property {boolean} progress
- * @property {string} tmpDir
  * @property {string} cacheDir
  * @property {number} startWith
  * @property {number|undefined} endWith
@@ -49,7 +48,7 @@ export class ImportCommand extends Command {
   constructor () {
     super('scribble-to-epub')
     this
-      .version(require('../../package.json').version)
+      .version(packageJson.version)
       .description('Downloads a book from scribblehub.com and outputs it as an epub file')
       .argument('<url>', 'base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"')
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
@@ -64,7 +63,6 @@ export class ImportCommand extends Command {
       .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (dummyValue, previous) => previous + 1, 0)
       .option('-q, --quiet', 'do not output anything', false)
 
-      .option('--tmp-dir <dir>', 'Temp directory', this.defaultTmpDir)
       .option('--cache-dir <dir>', 'Cache directory', this.defaultCacheDir)
       .action(this.run)
   }
@@ -89,8 +87,7 @@ export class ImportCommand extends Command {
 
     await book.loadChapters(options.startWith, options.endWith)
     await exporter.export(book, outFilePath, {
-      verbose: this.options.verbosity >= Verbosity.verbose,
-      tempDir: this.options.tmpDir
+      verbose: this.options.verbosity >= Verbosity.verbose
     })
 
     await Browser.close()
@@ -169,14 +166,10 @@ export class ImportCommand extends Command {
   /**
    * @returns {string}
    */
-  get defaultTmpDir () {
-    return path.resolve(os.tmpdir(), commandName)
-  }
-
-  /**
-   * @returns {string}
-   */
   get defaultCacheDir () {
-    return findCacheDirectory({ name: commandName })
+    return path.resolve(
+      findCacheDirectory({ name: commandName }),
+      parseSemVer(packageJson.version).major.toString()
+    )
   }
 }

@@ -9,6 +9,7 @@ import { eventEmitter } from '../Events/event-emitter.js'
  * @property {URL} cover
  * @property {string} description
  * @property {string} details
+ * @property {Date} date
  * @property {number} postId
  * @property {number} authorId
  * @property {string} authorName
@@ -27,6 +28,7 @@ export class BookMetadata {
       },
       async () => { this.title = await page.$eval('meta[property="og:title"]', (element) => element.getAttribute('content')) },
       async () => { this.cover = new URL(await page.$eval('meta[property="og:image"]', (element) => element.getAttribute('content'))) },
+      async () => { this.date = new Date(await page.$eval('span[title^="Last updated:"]', (element) => element.getAttribute('title').replace(/^Last updated: /, ''))) },
       async () => { this.description = await page.$eval('meta[property="og:description"]', (element) => element.getAttribute('content')) },
       async () => {
         await page.$$eval('[class^="ad_"]', (nodes) => nodes.forEach((node) => node.remove()))

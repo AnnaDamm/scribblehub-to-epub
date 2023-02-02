@@ -36,8 +36,7 @@ Options:
   -P, --no-progress           do not show a progress bar
   -v, --verbose               verbosity that can be increased (-v, -vv, -vvv)
   -q, --quiet                 do not output anything (default: false)
-  --tmp-dir <dir>             Temp directory (default: "/tmp/scribblehub-to-epub")
-  --cache-dir <dir>           Cache directory (default: "./node_modules/.cache/scribblehub-to-epub")
+  --cache-dir <dir>           Cache directory (default: "~/node_modules/.cache/scribblehub-to-epub")
   -h, --help                  display help for command
 ```
 

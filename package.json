@@ -1,6 +1,6 @@
 {
   "name": "@annadamm/scribblehub-to-epub",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
   "main": "src/index.js",
   "type": "module",
@@ -12,6 +12,8 @@
   },
   "keywords": [
     "scribblehub",
+    "fanfiction",
+    "webnovels",
     "books",
     "epub"
   ],
@@ -29,9 +31,10 @@
     "async-parallel": "^1.2.3",
     "cli-progress": "^3.11.2",
     "commander": "^9.5.0",
-    "epub-gen": "^0.1.0",
+    "epub-gen-memory": "^1.0.10",
     "find-cache-dir": "^4.0.0",
     "puppeteer": "^19.5.0",
+    "semver-parser": "^4.0.1",
     "yesno": "^0.4.0"
   },
   "homepage": "https://github.com/AnnaDamm/scribblehub-to-epub.git",

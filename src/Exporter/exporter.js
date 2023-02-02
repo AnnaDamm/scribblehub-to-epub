@@ -1,9 +1,9 @@
-import EPub from 'epub-gen'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { eventEmitter } from '../Events/event-emitter.js'
 import { exportStarted, ExportStartedEvent } from '../Events/export-started.js'
+import { EPub } from 'epub-gen-memory'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -11,12 +11,13 @@ const assetPath = path.resolve(__dirname, '..', '..', 'assets')
 
 /**
  * @typedef {Object} EpubChapter
- * @property {string|undefined} title
- * @property {string|undefined} author
- * @property {string} data
+ * @property {string|undefined} title;
+ * @property {string|string[]|undefined} author
+ * @property {string} content
  * @property {boolean|undefined} excludeFromToc
  * @property {boolean|undefined} beforeToc
  * @property {string|undefined} filename
+ * @property {string|undefined} url
  */
 export class Exporter {
   /**
@@ -30,20 +31,21 @@ export class Exporter {
 
     const bookMetaData = await book.getBookMetaData()
 
-    const exportOptions = {
+    const epub = new EPub({
       title: bookMetaData.title,
       author: bookMetaData.authorName,
       publisher: bookMetaData.publisher,
-      cover: await book.loadCover(),
-      appendChapterTitles: true,
-      content: await this.buildContent(book),
-      css: fs.readFileSync(path.resolve(assetPath, 'styles', 'styles.css')),
-      customNcxTocTemplatePath: path.resolve(assetPath, 'templates', 'toc.ncx.ejs'),
+      description: bookMetaData.description,
+      cover: 'file://' + await book.loadCover(),
+      numberChaptersInTOC: false,
+      date: bookMetaData.date.toISOString(),
+      css: fs.readFileSync(path.resolve(assetPath, 'styles', 'scribblehub.css')).toString(),
       ...extraOptions
-    }
+    }, await this.buildContent(book))
 
-    const epub = new EPub(exportOptions, outputFile)
-    await epub.promise
+    const dataBuffer = await epub.genEpub()
+
+    fs.writeFileSync(outputFile, dataBuffer)
   }
 
   /**
@@ -71,8 +73,9 @@ export class Exporter {
   buildDetailsChapter (bookMetadata) {
     return {
       title: 'Synopsis',
-      data: bookMetadata.details,
-      filename: 'synopsis.html'
+      content: bookMetadata.details,
+      filename: 'synopsis.html',
+      beforeToc: true
     }
   }
 
@@ -84,7 +87,7 @@ export class Exporter {
   buildChapter (chapter) {
     return {
       title: chapter.title,
-      data: chapter.text,
+      content: chapter.text,
       filename: `chapter-${chapter.id}.html`
     }
   }

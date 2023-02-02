@@ -141,3 +141,7 @@ i.fa {
 .sp-body {
     display: block !important;
 }
+
+img:not([id="acc_ava_change profile"]) {
+    width: 100%;
+}
