@@ -1,147 +1,151 @@
 .epub-author {
-    color: #555;
+  color: #555;
 }
 
 .epub-link {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .epub-link a {
-    color: #666;
-    font-size: 90%;
+  color: #666;
+  font-size: 90%;
 }
 
 .toc-author {
-    font-size: 90%;
-    color: #555;
+  font-size: 90%;
+  color: #555;
 }
 
 .toc-link {
-    color: #999;
-    font-size: 85%;
-    display: block;
+  color: #999;
+  font-size: 85%;
+  display: block;
 }
 
 hr {
-    border: 0;
-    border-bottom: 1px solid #dedede;
-    margin: 60px 10%;
+  border: 0;
+  border-bottom: 1px solid #dedede;
+  margin: 60px 10%;
 }
 
 ol {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 li {
-    margin: 10px 0
+  margin: 10px 0;
 }
 
 span[property="genre"] {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 span[property="genre"]:last-child {
-    margin-right: inherit;
+  margin-right: inherit;
 }
 
 .fic_row.details > div {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .sp-head::before {
-    content: '⚠'
+  content: "⚠";
 }
 
-.wi_news, .sp-wrap, .wi_authornotes {
-    border: 2px solid black;
-    padding: 1em;
+.wi_news,
+.sp-wrap,
+.wi_authornotes {
+  border: 2px solid black;
+  padding: 1em;
 }
 
-.wi_novel_title, .wi_news_title, .sp-head {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 1.3em;
-    font-weight: bold;
+.wi_novel_title,
+.wi_news_title,
+.sp-head {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 1.3em;
+  font-weight: bold;
 }
 
-.wi_authornotes:before {
-    font-family: sans-serif;
-    content: "\201C";
-    color: #001018;
-    font-size: 4em;
-    position: absolute;
-    left: 10px;
-    top: -10px
+.wi_authornotes::before {
+  font-family: sans-serif;
+  content: "\201C";
+  color: #001018;
+  font-size: 4em;
+  position: absolute;
+  left: 10px;
+  top: -10px;
 }
 
-.wi_authornotes:after {
-    font-family: sans-serif;
-    content: "\201D";
-    color: #001018;
-    font-size: 4em;
-    position: absolute;
-    bottom: -45px;
-    right: 10px
+.wi_authornotes::after {
+  font-family: sans-serif;
+  content: "\201D";
+  color: #001018;
+  font-size: 4em;
+  position: absolute;
+  bottom: -45px;
+  right: 10px;
 }
 
 .wi_authornotes {
-    padding: 15px 35px;
-    border-radius: 5px;
-    position: relative
+  padding: 15px 35px;
+  border-radius: 5px;
+  position: relative;
 }
 
 .an_username a {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .wi_authornotes_body {
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
 blockquote {
-    margin: 20px auto;
-    padding: 1.2em 30px 1.2em 75px;
-    border-left: 8px solid #333;
-    line-height: 1.6;
-    position: relative;
-    background: #f2f2f2
+  margin: 20px auto;
+  padding: 1.2em 30px 1.2em 75px;
+  border-left: 8px solid #333;
+  line-height: 1.6;
+  position: relative;
+  background: #f2f2f2;
 }
 
 blockquote::before {
-    content: "\201C";
-    font-size: 4em;
-    position: absolute;
-    left: 10px;
-    top: -10px
+  content: "\201C";
+  font-size: 4em;
+  position: absolute;
+  left: 10px;
+  top: -10px;
 }
 
 blockquote::after {
-    content: ''
+  content: "";
 }
 
 blockquote span {
-    display: block;
-    font-style: normal;
-    margin-top: 1em
+  display: block;
+  font-style: normal;
+  margin-top: 1em;
 }
 
 .spdiv {
-    display: none;
+  display: none;
 }
 
 i.fa {
-    font-style: normal;
+  font-style: normal;
 }
 
 .fa-exclamation-triangle::before {
-    content: '⚠'
+  content: "⚠";
 }
 
 .sp-body {
-    display: block !important;
+  display: block !important;
 }
 
 img:not([id="acc_ava_change profile"]) {
-    width: 100%;
+  width: 100%;
 }

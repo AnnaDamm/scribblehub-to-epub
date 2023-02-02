@@ -12,15 +12,18 @@ import { eventEmitter } from '../Events/event-emitter.js'
  * @property {URL} url
  * @property {string} title
  * @property {string} text
- * @property {int} id
+ * @property {number} id
+ * @property {number} index
  */
 export class Chapter {
   /**
    * @param {URL} url
+   * @param {number} index
    * @param {string} cacheDir
    */
-  constructor (url, cacheDir) {
+  constructor (url, index, cacheDir) {
     this.url = url
+    this.index = index
     this._cacheDir = cacheDir
   }
 
@@ -75,6 +78,7 @@ export class Chapter {
       const data = JSON.parse(fileCache.readString(this._cacheFilePath))
 
       this.url = new URL(data.url)
+      this.index = data.index
       this.title = data.title
       this.text = data.text
 
@@ -92,6 +96,7 @@ export class Chapter {
   _writeToCache () {
     fileCache.writeString(this._cacheFilePath, JSON.stringify({
       url: this.url.toString(),
+      index: this.index,
       title: this.title,
       text: this.text
     }))

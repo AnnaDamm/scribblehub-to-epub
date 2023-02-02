@@ -6,8 +6,14 @@
   "type": "module",
   "scripts": {
     "run": "node src/index.js",
-    "lint": "standard",
-    "lint:fix": "standard --fix",
+    "lint": "npm run lint:css && npm run lint:js && npm run lint:md",
+    "lint:fix": "npm run lint:css:fix && npm run lint:js:fix && npm run lint:md:fix",
+    "lint:css": "stylelint \"assets/styles/**/*.css\"",
+    "lint:css:fix": "npm run lint:css -- --fix",
+    "lint:js": "standard",
+    "lint:js:fix": "npm run lint:js -- --fix",
+    "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
+    "lint:md:fix": "npm run lint:md -- --fix",
     "scribblehub-to-epub": "npm run run"
   },
   "keywords": [
@@ -42,8 +48,11 @@
     "url": "https://github.com/AnnaDamm/scribblehub-to-epub.git/issues"
   },
   "devDependencies": {
+    "markdownlint-cli": "^0.33.0",
     "pre-commit": "^1.2.2",
-    "standard": "^17.0.0"
+    "standard": "^17.0.0",
+    "stylelint": "^14.16.1",
+    "stylelint-config-standard": "^29.0.0"
   },
   "bin": "src/index.js",
   "files": [
@@ -53,6 +62,19 @@
   "standard": {
     "ignore": [
       "dist"
+    ]
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "overrides": [
+      {
+        "files": [
+          "assets/styles/scribblehub.css"
+        ],
+        "rules": {
+          "selector-class-pattern": null
+        }
+      }
     ]
   },
   "pre-commit": [

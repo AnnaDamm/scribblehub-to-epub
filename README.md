@@ -1,15 +1,19 @@
 # Scribblehub-to-epub
-This program scrapes a single story of [Scribblehub](https://www.scribblehub.com) and exports it as a book in epub format.
+
+This program scrapes a single story of [Scribblehub](https://www.scribblehub.com)
+and exports it as a book in epub format.
 The epub can be read by most ebook readers, such as Kindle.
 
 ## Installation
-**This script is only tested with node 19**
+
+**Attention**: This script is only tested with node 19
 
 ```bash
 npm install -g @annadamm/scribblehub-to-epub
 ```
 
 ## Usage
+
 `<scribblehub-url>` refers to the main page of a story, looking like this: `https://www.scribblehub.com/series/<id>/<name>/,`
 e.g: `https://www.scribblehub.com/series/36420/the-fastest-man-alive/`.
 
@@ -18,7 +22,8 @@ npm run run <scribblehub-url>
 ```
 
 ### All CLI Parameters
-```
+
+```text
 Usage: scribble-to-epub [options] <url> [out-file]
 
 Downloads a book from scribblehub.com and outputs it as an epub file
@@ -41,10 +46,13 @@ Options:
 ```
 
 ## Report bugs and feature requests
+
 Report any bugs and feature requests on [GitHub Issues](https://github.com/AnnaDamm/scribblehub-to-epub/issues)
 
 ## Contribute
+
 Clone GitHub and install dependencies:
+
 ```bash
 git clone https://github.com/AnnaDamm/scribblehub-to-epub.git
 cd scribblehub-to-epub

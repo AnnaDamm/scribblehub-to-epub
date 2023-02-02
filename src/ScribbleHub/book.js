@@ -83,8 +83,8 @@ export class Book {
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
         const chapters = Parallel.map(
           chapterUrls,
-          async (url) => {
-            const chapter = new Chapter(url, cacheDir)
+          async (url, index) => {
+            const chapter = new Chapter(url, index + startWith, cacheDir)
             await chapter.load(this._assetDownloader)
             return chapter
           },

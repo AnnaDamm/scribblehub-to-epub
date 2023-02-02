@@ -88,7 +88,7 @@ export class Exporter {
     return {
       title: chapter.title,
       content: chapter.text,
-      filename: `chapter-${chapter.id}.html`
+      filename: `chapter-${chapter.index}.html`
     }
   }
 }
