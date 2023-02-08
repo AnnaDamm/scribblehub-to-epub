@@ -41,6 +41,11 @@ const commandName = 'scribblehub-to-epub'
  * @property {number} startWith
  * @property {number|undefined} endWith
  */
+
+/**
+ * @typedef {Object} BulkImportOptions
+ * @property {string} config
+ */
 /**
  * @property {string} urlString
  * @property {string|undefined} outFile
@@ -67,6 +72,10 @@ export class ImportCommand extends Command {
 
       .option('--cache-dir <dir>', 'Cache directory', this.defaultCacheDir)
       .action(this.run)
+
+    this.command('bulk-import')
+      .requiredOption('--config <config-file>', 'config file name', 'config.json')
+      .action(this.bulkImport)
   }
 
   /**
@@ -172,5 +181,13 @@ export class ImportCommand extends Command {
     const cacheDir = findCacheDirectory({ name: commandName, cwd: __dirname })
 
     return path.resolve(cacheDir, '2')
+  }
+
+  /**
+   * @param {BulkImportOptions} options
+   * @returns {Promise<void>}
+   */
+  async bulkImport (options) {
+    console.log(options)
   }
 }
