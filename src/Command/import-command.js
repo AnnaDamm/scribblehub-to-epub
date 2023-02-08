@@ -13,9 +13,12 @@ import { Book } from '../ScribbleHub/book.js'
 import { Verbosity } from './constants.js'
 import { parseSemVer } from 'semver-parser'
 import * as path from 'path'
+import { fileURLToPath } from 'url'
 
 const require = createRequire(import.meta.url)
 const packageJson = require('../../package.json')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const commandName = 'scribblehub-to-epub'
 
@@ -167,8 +170,10 @@ export class ImportCommand extends Command {
    * @returns {string}
    */
   get defaultCacheDir () {
+    const cacheDir = findCacheDirectory({ name: commandName, cwd: __dirname })
+
     return path.resolve(
-      findCacheDirectory({ name: commandName }),
+      cacheDir,
       parseSemVer(packageJson.version).major.toString()
     )
   }
