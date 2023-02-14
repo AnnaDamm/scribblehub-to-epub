@@ -49,8 +49,7 @@ export class Book {
     if (this._page === undefined) {
       this._page = (async () => {
         const page = await Browser.newPage()
-        await page.goto(this.url.toString())
-        await page.waitForSelector('body')
+        await page.goto(this.url.toString(), { waitUntil: 'load' })
         return page
       })()
     }
