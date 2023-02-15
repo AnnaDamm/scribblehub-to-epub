@@ -39,7 +39,6 @@
     "commander": "^9.5.0",
     "epub-gen-memory": "^1.0.10",
     "find-cache-dir": "^4.0.0",
-    "global-modules-path": "^3.0.0",
     "puppeteer": "^19.7.0",
     "semver-parser": "^4.0.1",
     "yesno": "^0.4.0"
