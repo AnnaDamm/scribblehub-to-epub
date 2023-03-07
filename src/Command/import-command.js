@@ -11,7 +11,6 @@ import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { Book } from '../ScribbleHub/book.js'
 import { Verbosity } from './constants.js'
-import { parseSemVer } from 'semver-parser'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -172,9 +171,6 @@ export class ImportCommand extends Command {
   get defaultCacheDir () {
     const cacheDir = findCacheDirectory({ name: commandName, cwd: __dirname })
 
-    return path.resolve(
-      cacheDir,
-      parseSemVer(packageJson.version).major.toString()
-    )
+    return path.resolve(cacheDir, '2')
   }
 }
