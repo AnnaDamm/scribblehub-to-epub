@@ -126,7 +126,7 @@ export class ImportCommand extends Command {
 
     if (this.options.progress) {
       const chapterProgressBar = new SingleBar({
-        format: '[{bar}] {percentage}% | {value}/{total} | ETA: {eta_formatted} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n\n' : '')
+        format: '[{bar}] {percentage}% | {value}/{total} | Time: {duration_formatted}' + (this.options.verbosity >= Verbosity.veryVerbose ? '\n\n' : '')
       })
       eventEmitter.addListener(chapterLoadingStarted,
         /** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
