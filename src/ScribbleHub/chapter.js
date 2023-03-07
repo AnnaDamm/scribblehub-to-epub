@@ -52,8 +52,8 @@ export class Chapter {
    * @returns {Promise<void>}
    */
   async _loadFromWeb (assetDownloader) {
-    const page = await Browser.newPage()
     const response = await fetch(this.url.toString())
+    const page = await Browser.newPage()
     await page.setContent(await response.text())
     await assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')
     await Parallel.invoke([
