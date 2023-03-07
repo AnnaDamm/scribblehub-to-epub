@@ -1,7 +1,6 @@
 import { SingleBar } from 'cli-progress'
-import { Command } from 'commander'
+import { Command as BaseCommand } from 'commander'
 import findCacheDirectory from 'find-cache-dir'
-import { createRequire } from 'module'
 import { Browser } from '../Browser/browser.js'
 import { chapterLoaded } from '../Events/chapter-loaded.js'
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
@@ -14,8 +13,6 @@ import { Verbosity } from './constants.js'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
-const require = createRequire(import.meta.url)
-const packageJson = require('../../package.json')
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -51,11 +48,10 @@ const commandName = 'scribblehub-to-epub'
  * @property {string|undefined} outFile
  * @property {Options} options
  */
-export class ImportCommand extends Command {
+export class ImportCommand extends BaseCommand {
   constructor () {
-    super('scribble-to-epub')
+    super('import')
     this
-      .version(packageJson.version)
       .description('Downloads a book from scribblehub.com and outputs it as an epub file')
       .argument('<url>', 'base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"')
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
@@ -72,10 +68,6 @@ export class ImportCommand extends Command {
 
       .option('--cache-dir <dir>', 'Cache directory', this.defaultCacheDir)
       .action(this.run)
-
-    this.command('bulk-import')
-      .requiredOption('--config <config-file>', 'config file name', 'config.json')
-      .action(this.bulkImport)
   }
 
   /**
@@ -181,13 +173,5 @@ export class ImportCommand extends Command {
     const cacheDir = findCacheDirectory({ name: commandName, cwd: __dirname })
 
     return path.resolve(cacheDir, '2')
-  }
-
-  /**
-   * @param {BulkImportOptions} options
-   * @returns {Promise<void>}
-   */
-  async bulkImport (options) {
-    console.log(options)
   }
 }
