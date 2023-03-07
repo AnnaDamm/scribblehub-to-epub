@@ -87,7 +87,7 @@ export class Book {
             await chapter.load(this._assetDownloader)
             return chapter
           },
-          { concurrency: 10 }
+          { concurrency: 20 }
         )
         chapters.then((chapters) => {
           eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
