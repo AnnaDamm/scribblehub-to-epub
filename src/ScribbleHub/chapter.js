@@ -53,7 +53,8 @@ export class Chapter {
    */
   async _loadFromWeb (assetDownloader) {
     const page = await Browser.newPage()
-    await page.goto(this.url.toString(), { waitUntil: 'load' })
+    const response = await fetch(this.url.toString())
+    await page.setContent(await response.text())
     await assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')
     await Parallel.invoke([
       async () => { this.title = await page.$eval('.chapter-title', (node) => node.innerHTML) },
@@ -62,6 +63,7 @@ export class Chapter {
         this.text = await page.$eval('#chp_raw', (node) => node.innerHTML)
       }
     ])
+    await page.close()
   }
 
   /**

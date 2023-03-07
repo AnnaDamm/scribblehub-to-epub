@@ -48,7 +48,7 @@ export class Book {
   async getPage () {
     if (this._page === undefined) {
       this._page = (async () => {
-        const page = await Browser.newPage()
+        const page = await Browser.getPage()
         await page.goto(this.url.toString(), { waitUntil: 'load' })
         return page
       })()
@@ -87,7 +87,7 @@ export class Book {
             await chapter.load(this._assetDownloader)
             return chapter
           },
-          { concurrency: 5 }
+          { concurrency: 10 }
         )
         chapters.then((chapters) => {
           eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
@@ -128,6 +128,7 @@ export class Book {
           )
           .map((chapterNode) => chapterNode.querySelector('.toc_a').getAttribute('href'))
     )
+    await page.close()
     return urlStrings.map((urlString) => new URL(urlString))
   }
 
