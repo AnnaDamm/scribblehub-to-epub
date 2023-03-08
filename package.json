@@ -37,6 +37,7 @@
     "async-parallel": "^1.2.3",
     "cli-progress": "^3.11.2",
     "commander": "^9.5.0",
+    "enquirer": "^2.3.6",
     "epub-gen-memory": "^1.0.10",
     "find-cache-dir": "^4.0.0",
     "puppeteer": "^19.7.0",

@@ -9,14 +9,12 @@ import { allEvents, eventEmitter } from '../Events/event-emitter.js'
 import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { Book } from '../ScribbleHub/book.js'
-import { Verbosity } from './constants.js'
+import { commandName, Verbosity } from './constants.js'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-const commandName = 'scribblehub-to-epub'
 
 /**
  * @typedef {Object} ParsedOptions
@@ -31,6 +29,7 @@ const commandName = 'scribblehub-to-epub'
 
 /**
  * @typedef {Object} Options
+ * @property {string} save
  * @property {boolean|undefined} overwrite
  * @property {number} verbosity
  * @property {boolean} progress
@@ -56,6 +55,7 @@ export class ImportCommand extends BaseCommand {
       .argument('<url>', 'base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"')
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
 
+      .option('--save [file-name]', 'Save into urls file to use in bulk-import command')
       .option('-s, --start-with <chapter>', 'Chapter index to start with', (value) => parseInt(value, 10), 1)
       .option('-e, --end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => value ? parseInt(value, 10) : undefined, undefined)
 

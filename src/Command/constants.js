@@ -4,3 +4,6 @@ export const Verbosity = {
   verbose: 1,
   veryVerbose: 2
 }
+
+export const defaultSaveFile = 'urls.json'
+export const commandName = 'scribblehub-to-epub'
