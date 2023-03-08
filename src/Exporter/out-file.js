@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import yesno from 'yesno'
+import Enquirer from 'enquirer'
 
 const defaultExtension = '.epub'
 
@@ -35,10 +35,10 @@ class OutFileSingleton {
    * @private
    */
   async askForFileOverwrite (outFile) {
-    return await yesno({
-      question: `File ${outFile} already exists. Overwrite? [Y]/N`,
-      defaultValue: true
-    })
+    return await new Enquirer.Confirm({
+      message: `File ${outFile} already exists. Overwrite?`,
+      initial: true
+    }).run()
   }
 }
 

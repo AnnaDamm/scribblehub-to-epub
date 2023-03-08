@@ -1,4 +1,5 @@
 /dist
+/urls.json
 
 node_modules
 

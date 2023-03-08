@@ -40,8 +40,7 @@
     "enquirer": "^2.3.6",
     "epub-gen-memory": "^1.0.10",
     "find-cache-dir": "^4.0.0",
-    "puppeteer": "^19.7.0",
-    "yesno": "^0.4.0"
+    "puppeteer": "^19.7.0"
   },
   "homepage": "https://github.com/AnnaDamm/scribblehub-to-epub.git",
   "bugs": {
