@@ -1,4 +1,3 @@
-import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import stream from 'stream'

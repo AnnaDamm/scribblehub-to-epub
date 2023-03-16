@@ -1,12 +1,13 @@
-import * as Parallel from 'async-parallel'
 import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../Events/book-metadata-loaded.js'
 import { eventEmitter } from '../Events/event-emitter.js'
+import * as cheerio from 'cheerio'
+import { cleanContents } from '../Cheerio/clean-contents.js'
 
 /**
  * @property {URL} canonicalUrl
  * @property {string} slug
  * @property {string} title
- * @property {URL} cover
+ * @property {URL} coverUrl
  * @property {string} description
  * @property {string} details
  * @property {Date} date
@@ -17,37 +18,35 @@ import { eventEmitter } from '../Events/event-emitter.js'
  */
 export class BookMetadata {
   /**
-   * @param {Page} page
+   * @param {URL} url
    * @returns {Promise<this>}
    */
-  async load (page) {
-    await Parallel.invoke([
-      async () => {
-        this.canonicalUrl = new URL(await page.$eval('meta[property="og:url"]', (element) => element.getAttribute('content')))
-        this.slug = this.canonicalUrl.toString().match(/.+\/(?<slug>.+?)\/$/).groups.slug
-      },
-      async () => { this.title = await page.$eval('meta[property="og:title"]', (element) => element.getAttribute('content')) },
-      async () => { this.cover = new URL(await page.$eval('meta[property="og:image"]', (element) => element.getAttribute('content'))) },
-      async () => { this.date = this.parseUpdatedDate(await page.$eval('span[title^="Last updated:"]', (element) => element.getAttribute('title').replace(/^Last updated: /, ''))) },
-      async () => { this.description = await page.$eval('meta[property="og:description"]', (element) => element.getAttribute('content')) },
-      async () => {
-        await page.$$eval('[class^="ad_"]', (nodes) => nodes.forEach((node) => node.remove()))
-        this.details = await page.$eval('.box_fictionpage.details', (element) => element.innerHTML)
-      },
-      async () => { this.postId = parseInt(await page.$eval('#mypostid', (element) => element.getAttribute('value')), 10) },
-      async () => { this.authorId = parseInt(await page.$eval('#authorid', (element) => element.getAttribute('value')), 10) },
-      async () => { this.authorName = await page.$eval('meta[name="twitter:creator"]', (element) => element.getAttribute('content')) },
-      async () => { this.publisher = await page.$eval('meta[property="og:site_name"]', (element) => element.getAttribute('content')) }
-    ])
+  async load (url) {
+    const page = await fetch(url.toString())
+    const $ = cheerio.load(await page.text())
+
+    this.canonicalUrl = new URL($('meta[property="og:url"]').attr('content'))
+    this.slug = this.canonicalUrl.toString().match(/.+\/(?<slug>.+?)\/$/).groups.slug
+    this.title = $('meta[property="og:title"]').attr('content')
+    this.coverUrl = $('meta[property="og:image"]').attr('content')
+    this.date = this._parseUpdatedDate($('span[title^="Last updated:"]').attr('title'))
+    this.description = $('meta[property="og:description"]').attr('content')
+    this.postId = parseInt($('#mypostid').val(), 10)
+    this.authorId = parseInt($('#authorid').val(), 10)
+    this.authorName = $('meta[name="twitter:creator"]').attr('content')
+    this.publisher = $('meta[property="og:site_name"]').attr('content')
+    this.details = cleanContents($, $('.fic_row.details')).html()
+
     eventEmitter.emit(bookMetadataLoaded, new BookMetadataLoadedEvent(this))
   }
 
   /**
    * @param {string} dateString
    * @return {Date|null}
+   * @private
    */
-  parseUpdatedDate (dateString) {
-    let date = new Date(dateString)
+  _parseUpdatedDate (dateString) {
+    let date = new Date(dateString.replace(/^Last updated: /, ''))
     if (date.toString() !== 'Invalid Date') {
       return date
     }

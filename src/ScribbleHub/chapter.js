@@ -1,7 +1,5 @@
-import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
-import { Browser } from '../Browser/browser.js'
 import { fileCache } from '../Cache/file-cache.js'
 import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../Events/chapter-loaded-from-cache.js'
 import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded.js'

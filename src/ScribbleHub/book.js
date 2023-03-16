@@ -1,7 +1,5 @@
-import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
-import { Browser } from '../Browser/browser.js'
 import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
 import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js'
 import { eventEmitter } from '../Events/event-emitter.js'
@@ -34,7 +32,7 @@ export class Book {
     if (this._bookMetaData === undefined) {
       this._bookMetaData = (async () => {
         const bookMetadata = new BookMetadata()
-        await bookMetadata.load(await this.getPage())
+        await bookMetadata.load(this.url)
         eventEmitter.emit(mainPageLoaded, new MainPageLoaded(this))
         return bookMetadata
       })()
@@ -43,27 +41,12 @@ export class Book {
   }
 
   /**
-   * @private
-   */
-  async getPage () {
-    if (this._page === undefined) {
-      this._page = (async () => {
-        const page = await Browser.getPage()
-        await page.goto(this.url.toString(), { waitUntil: 'load' })
-        return page
-      })()
-    }
-
-    return this._page
-  }
-
-  /**
    * @returns {Promise<string>}
    */
   async loadCover () {
     const bookMetaData = await this.getBookMetaData()
-    const filePath = await this._assetDownloader.mapFilePath(bookMetaData.cover)
-    await this._assetDownloader.download(bookMetaData.cover, filePath)
+    const filePath = await this._assetDownloader.mapFilePath(bookMetaData.coverUrl)
+    await this._assetDownloader.download(bookMetaData.coverUrl, filePath)
     return filePath
   }
 

@@ -2,7 +2,6 @@ import { SingleBar } from 'cli-progress'
 import { Command } from 'commander'
 import findCacheDirectory from 'find-cache-dir'
 import { createRequire } from 'module'
-import { Browser } from '../Browser/browser.js'
 import { chapterLoaded } from '../Events/chapter-loaded.js'
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
 import { chapterLoadingStarted } from '../Events/chapter-loading-started.js'
@@ -87,12 +86,10 @@ export class ImportCommand extends Command {
 
     const outFilePath = await this.prepareOutFile(book)
 
-    await book.loadChapters(options.startWith, options.endWith)
+    // await book.loadChapters(options.startWith, options.endWith)
     await exporter.export(book, outFilePath, {
       verbose: this.options.verbosity >= Verbosity.verbose
     })
-
-    await Browser.close()
   }
 
   /**
