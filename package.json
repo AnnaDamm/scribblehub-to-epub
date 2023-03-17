@@ -34,7 +34,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "async-parallel": "^1.2.3",
     "cheerio": "^1.0.0-rc.12",
     "cli-progress": "^3.11.2",
     "commander": "^9.5.0",

@@ -1,4 +1,3 @@
-import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
@@ -60,18 +59,14 @@ export class Book {
       this.chapters = (async () => {
         const chapterUrls = (await this.getChapterUrls()).slice(startWith - 1, endWith)
 
-        const cacheDir = await this.prepareCacheDir()
+        const cacheDir = this.prepareCacheDir()
 
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
-        const chapters = Parallel.map(
-          chapterUrls,
-          async (url, index) => {
-            const chapter = new Chapter(url, index + startWith, cacheDir)
-            await chapter.load(this._assetDownloader)
-            return chapter
-          },
-          { concurrency: 20 }
-        )
+        const chapters = Promise.all(chapterUrls.map(async (url, index) => {
+          const chapter = new Chapter(url, index + startWith, await cacheDir)
+          await chapter.load(this._assetDownloader)
+          return chapter
+        }))
         chapters.then((chapters) => {
           eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
         })

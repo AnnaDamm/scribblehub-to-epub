@@ -1,4 +1,3 @@
-import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import stream from 'stream'
@@ -16,28 +15,20 @@ export class AssetDownloader {
   }
 
   /**
-   * @param {cheerio} $
-   * @param {string} selector
-   * @returns {Promise<string[]>} file paths
+   * @param {cheerio} $images
+   * @returns {Promise<void>}
    */
-  async fetchImagesFromQuery ($, selector) {
-    const urls = $(selector)
+  async fetchImages ($images) {
+    const urls = $images
       .map((i, image) => {
-        const $image = $(image)
-        const url = new URL($image.attr('src'))
-        $image.attr('src', this.mapFilePath(url))
+        const url = new URL(image.getAttribute('src'))
+        image.setAttribute('src', this.mapFilePath(url))
 
         return url
       })
       .filter((url) => !!url)
 
-    return Parallel.map(
-      urls,
-      async (url) => {
-        await this.download(url)
-        return url
-      }
-    )
+    await Promise.all(urls.map(async (url) => await this.download(url)))
   }
 
   /**

@@ -57,7 +57,7 @@ export class Chapter {
     this.title = $('.chapter-title').html()
     this.text = cleanContents($, $('#chp_raw')).html()
 
-    await assetDownloader.fetchImagesFromQuery($, '#chp_contents img[src]')
+    await assetDownloader.fetchImages($('#chp_contents img[src]'))
   }
 
   /**
