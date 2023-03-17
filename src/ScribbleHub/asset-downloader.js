@@ -1,3 +1,4 @@
+import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import stream from 'stream'
@@ -15,32 +16,26 @@ export class AssetDownloader {
   }
 
   /**
-   * @param {Page} page
+   * @param {cheerio} $
    * @param {string} selector
-   * @returns {Promise<Array.<string>>} file paths
+   * @returns {Promise<string[]>} file paths
    */
-  async fetchImagesFromQuery (page, selector) {
-    const urls = await page.$$eval(
-      selector,
-      (images, cacheDir) =>
-        images.map((image) => {
-          const url = image.getAttribute('src')
-          if (!url) {
-            return [undefined, undefined]
-          }
+  async fetchImagesFromQuery ($, selector) {
+    const urls = $(selector)
+      .map((i, image) => {
+        const $image = $(image)
+        const url = new URL($image.attr('src'))
+        $image.attr('src', this.mapFilePath(url))
 
-          const filePath = cacheDir + '/' + new URL(url).pathname.replace(/^\//, '')
-          image.setAttribute('src', 'file://' + filePath)
-          return [url, filePath]
-        }),
-      await this._cacheDir
-    )
+        return url
+      })
+      .filter((url) => !!url)
 
     return Parallel.map(
-      urls.filter(([url, _]) => !!url),
-      async ([url, filePath]) => {
-        await this.download(new URL(url), filePath)
-        return [url, filePath]
+      urls,
+      async (url) => {
+        await this.download(url)
+        return url
       }
     )
   }
@@ -55,10 +50,10 @@ export class AssetDownloader {
 
   /**
    * @param {URL} url
-   * @param {string} filePath
    * @returns {Promise<string>} file path
    */
-  async download (url, filePath) {
+  async download (url) {
+    const filePath = await this.mapFilePath(url)
     if (fs.existsSync(filePath)) {
       eventEmitter.emit(assetAlreadyDownloaded, new AssetAlreadyDownloadedEvent(filePath))
       return filePath

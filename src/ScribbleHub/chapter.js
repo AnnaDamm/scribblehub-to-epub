@@ -5,6 +5,8 @@ import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../Events/c
 import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded.js'
 import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../Events/chapter-written-to-cache.js'
 import { eventEmitter } from '../Events/event-emitter.js'
+import * as cheerio from 'cheerio'
+import { cleanContents } from '../Cheerio/clean-contents.js'
 
 /**
  * @property {URL} url
@@ -51,17 +53,11 @@ export class Chapter {
    */
   async _loadFromWeb (assetDownloader) {
     const response = await fetch(this.url.toString())
-    const page = await Browser.newPage()
-    await page.setContent(await response.text())
-    await assetDownloader.fetchImagesFromQuery(page, '#chp_contents img[src]')
-    await Parallel.invoke([
-      async () => { this.title = await page.$eval('.chapter-title', (node) => node.innerHTML) },
-      async () => {
-        await page.$$eval('[class^="ad_"]', (nodes) => nodes.forEach((node) => node.remove()))
-        this.text = await page.$eval('#chp_raw', (node) => node.innerHTML)
-      }
-    ])
-    await page.close()
+    const $ = cheerio.load(await response.text())
+    this.title = $('.chapter-title').html()
+    this.text = cleanContents($, $('#chp_raw')).html()
+
+    await assetDownloader.fetchImagesFromQuery($, '#chp_contents img[src]')
   }
 
   /**

@@ -1,3 +1,4 @@
+import * as Parallel from 'async-parallel'
 import fs from 'fs'
 import path from 'path'
 import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
@@ -7,6 +8,7 @@ import { MainPageLoaded, mainPageLoaded } from '../Events/main-page-loaded.js'
 import { AssetDownloader } from './asset-downloader.js'
 import { BookMetadata } from './book-metadata.js'
 import { Chapter } from './chapter.js'
+import * as cheerio from 'cheerio'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
@@ -45,9 +47,7 @@ export class Book {
    */
   async loadCover () {
     const bookMetaData = await this.getBookMetaData()
-    const filePath = await this._assetDownloader.mapFilePath(bookMetaData.coverUrl)
-    await this._assetDownloader.download(bookMetaData.coverUrl, filePath)
-    return filePath
+    return await this._assetDownloader.download(bookMetaData.coverUrl)
   }
 
   /**
@@ -98,21 +98,15 @@ export class Book {
         })
       }
     )
-    const responseText = await response.text()
-
-    const page = await Browser.newPage()
-    await page.setContent(responseText)
-    const urlStrings = await page.$$eval(
-      '.toc_w',
-      (chapterNodes) =>
-        chapterNodes
-          .sort((nodeA, nodeB) => (
-            Math.sign(parseInt(nodeA.getAttribute('order'), 10) - parseInt(nodeB.getAttribute('order'), 10)))
-          )
-          .map((chapterNode) => chapterNode.querySelector('.toc_a').getAttribute('href'))
-    )
-    await page.close()
-    return urlStrings.map((urlString) => new URL(urlString))
+    const $ = cheerio.load(await response.text())
+    return $('.toc_w')
+      .map((i, node) => ({
+        order: parseInt($(node).attr('order')),
+        url: new URL($(node).find('.toc_a').attr('href'))
+      }))
+      .toArray()
+      .sort((nodeA, nodeB) => Math.sign(nodeA.order - nodeB.order))
+      .map((node) => node.url)
   }
 
   /**

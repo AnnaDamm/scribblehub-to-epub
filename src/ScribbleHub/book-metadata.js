@@ -28,7 +28,7 @@ export class BookMetadata {
     this.canonicalUrl = new URL($('meta[property="og:url"]').attr('content'))
     this.slug = this.canonicalUrl.toString().match(/.+\/(?<slug>.+?)\/$/).groups.slug
     this.title = $('meta[property="og:title"]').attr('content')
-    this.coverUrl = $('meta[property="og:image"]').attr('content')
+    this.coverUrl = new URL($('meta[property="og:image"]').attr('content'))
     this.date = this._parseUpdatedDate($('span[title^="Last updated:"]').attr('title'))
     this.description = $('meta[property="og:description"]').attr('content')
     this.postId = parseInt($('#mypostid').val(), 10)
