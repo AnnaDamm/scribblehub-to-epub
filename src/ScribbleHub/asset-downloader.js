@@ -20,17 +20,25 @@ export class AssetDownloader {
    * @returns {Promise<void>}
    */
   async fetchImagesFromQuery ($, selector) {
-    const urls = $(selector)
-      .map((i, image) => {
+    const urls = (await Promise.all($(selector)
+      .map(async (i, image) => {
         const $image = $(image)
-        const url = new URL($image.attr('src'))
-        $image.attr('src', this.mapFilePath(url))
+        const urlString = $image.attr('src')
+        if (!urlString) {
+          return
+        }
+        const url = new URL(urlString)
+        $image.attr('src', await this.mapFilePath(url))
 
         return url
-      })
-      .filter((url) => !!url)
+      }))).filter((url) => !!url)
 
-    await Promise.all(urls.map(async (url) => await this.download(url)))
+    await Promise.all(urls.map(async (url) => {
+      if (!url) {
+        return
+      }
+      await this.download(url)
+    }))
   }
 
   /**
