@@ -1,6 +1,6 @@
 {
   "name": "@annadamm/scribblehub-to-epub",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
   "main": "src/index.js",
   "type": "module",
