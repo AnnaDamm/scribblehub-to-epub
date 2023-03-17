@@ -15,14 +15,16 @@ export class AssetDownloader {
   }
 
   /**
-   * @param {cheerio} $images
+   * @param {cheerio} $
+   * @param {string} selector
    * @returns {Promise<void>}
    */
-  async fetchImages ($images) {
-    const urls = $images
+  async fetchImagesFromQuery ($, selector) {
+    const urls = $(selector)
       .map((i, image) => {
-        const url = new URL(image.getAttribute('src'))
-        image.setAttribute('src', this.mapFilePath(url))
+        const $image = $(image)
+        const url = new URL($image.attr('src'))
+        $image.attr('src', this.mapFilePath(url))
 
         return url
       })
