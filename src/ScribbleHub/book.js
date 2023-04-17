@@ -8,6 +8,7 @@ import { AssetDownloader } from './asset-downloader.js'
 import { BookMetadata } from './book-metadata.js'
 import { Chapter } from './chapter.js'
 import * as cheerio from 'cheerio'
+import { throttleAll } from 'promise-throttle-all'
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
@@ -62,11 +63,16 @@ export class Book {
         const cacheDir = this.prepareCacheDir()
 
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
-        const chapters = Promise.all(chapterUrls.map(async (url, index) => {
-          const chapter = new Chapter(url, index + startWith, await cacheDir)
-          await chapter.load(this._assetDownloader)
-          return chapter
-        }))
+        const chapters = throttleAll(
+          50,
+          chapterUrls.map((url, index) =>
+            async () => {
+              const chapter = new Chapter(url, index + startWith, await cacheDir)
+              await chapter.load(this._assetDownloader)
+              return chapter
+            }
+          )
+        )
         chapters.then((chapters) => {
           eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
         })
