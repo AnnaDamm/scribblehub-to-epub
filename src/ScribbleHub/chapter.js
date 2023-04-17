@@ -52,12 +52,20 @@ export class Chapter {
    * @returns {Promise<void>}
    */
   async _loadFromWeb (assetDownloader) {
-    const response = await fetch(this.url.toString())
-    const $ = cheerio.load(await response.text())
-    this.title = $('.chapter-title').html()
-    this.text = cleanContents($, $('#chp_raw')).html()
+    let tries = 0
+    let $
+    do {
+      const response = await fetch(this.url.toString())
+      $ = cheerio.load(await response.text())
+      this.title = $('.chapter-title').html()
+    } while (!this.title && tries++ < 3)
+
+    if (!this.title) {
+      throw new Error(`Could not download chapter ${this.url.toString()}`)
+    }
 
     await assetDownloader.fetchImagesFromQuery($, '#chp_contents img[src]')
+    this.text = cleanContents($, $('#chp_raw')).html()
   }
 
   /**
@@ -72,6 +80,9 @@ export class Chapter {
     try {
       const data = JSON.parse(fileCache.readString(this._cacheFilePath))
 
+      if (!data.url || !data.index || !data.title || !data.text) {
+        return false
+      }
       this.url = new URL(data.url)
       this.index = data.index
       this.title = data.title

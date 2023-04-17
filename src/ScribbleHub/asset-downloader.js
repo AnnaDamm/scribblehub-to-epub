@@ -5,6 +5,7 @@ import { assetAlreadyDownloaded, AssetAlreadyDownloadedEvent } from '../Events/a
 import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../Events/asset-download-finished.js'
 import { assetDownloadStarted, AssetDownloadStartedEvent } from '../Events/asset-download-started.js'
 import { eventEmitter } from '../Events/event-emitter.js'
+import { createHash } from 'crypto'
 
 export class AssetDownloader {
   /**
@@ -28,7 +29,7 @@ export class AssetDownloader {
           return
         }
         const url = new URL(urlString)
-        $image.attr('src', await this.mapFilePath(url))
+        $image.attr('src', `file://${await this.mapFilePath(url)}`)
 
         return url
       }))).filter((url) => !!url)
@@ -37,7 +38,15 @@ export class AssetDownloader {
       if (!url) {
         return
       }
-      await this.download(url)
+      let error
+      let tries = 0
+      do {
+        try {
+          await this.download(url)
+        } catch (e) {
+          error = e
+        }
+      } while (error && tries++ < 3)
     }))
   }
 
@@ -46,7 +55,21 @@ export class AssetDownloader {
    * @returns {Promise<string>}
    */
   async mapFilePath (url) {
-    return path.resolve(await this._cacheDir, url.pathname.replace(/^\//, ''))
+    return path.resolve(
+      await this._cacheDir,
+      `images/${this._createShaSum(url)}${path.extname(url.pathname)}`
+    )
+  }
+
+  /**
+   * @param {URL} url
+   * @return string
+   * @private
+   */
+  _createShaSum (url) {
+    const hash = createHash('sha1')
+    hash.update(url.toString())
+    return hash.digest('hex')
   }
 
   /**

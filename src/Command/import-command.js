@@ -168,6 +168,6 @@ export class ImportCommand extends Command {
   get defaultCacheDir () {
     const cacheDir = findCacheDirectory({ name: commandName, cwd: __dirname })
 
-    return path.resolve(cacheDir, '2')
+    return path.resolve(cacheDir, '3')
   }
 }
