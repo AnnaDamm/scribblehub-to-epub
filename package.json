@@ -33,6 +33,10 @@
     "url": "git+https://github.com/AnnaDamm/scribblehub-to-epub.git"
   },
   "license": "ISC",
+  "engines": {
+    "node": ">=19.0 <20.0",
+    "npm": ">=9.0"
+  },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "cli-progress": "^3.11.2",

@@ -6,7 +6,8 @@ The epub can be read by most ebook readers, such as Kindle.
 
 ## Installation
 
-**Attention**: This script is only tested with node 19
+**Attention**: This script is only tested with node 19,
+and not compatible to node 20, due to a bug in nodejs http fetch method
 
 ```bash
 npm install -g @annadamm/scribblehub-to-epub
