@@ -34,7 +34,7 @@
   },
   "license": "ISC",
   "engines": {
-    "node": ">=19.0 <20.0",
+    "node": ">=19.0 <20.0 || >=20.2",
     "npm": ">=9.0"
   },
   "dependencies": {
