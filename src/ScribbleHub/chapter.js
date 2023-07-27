@@ -57,7 +57,7 @@ export class Chapter {
     do {
       const response = await fetch(this.url.toString())
       $ = cheerio.load(await response.text())
-      this.title = $('.chapter-title').html()
+      this.title = $('.chapter-title').text()
     } while (!this.title && tries++ < 3)
 
     if (!this.title) {
