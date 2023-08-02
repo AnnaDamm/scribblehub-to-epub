@@ -29,12 +29,16 @@ Usage: scribble-to-epub [options] <url> [out-file]
 Downloads a book from scribblehub.com and outputs it as an epub file
 
 Arguments:
-  url                         base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"
+  url                         base url of the Scribble Hub series
+                              (e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/).
+                              Using a url of a chapter instead of the main page will start downloading on that chapter,
+                              overriding the "start-with" option
   out-file                    file name of the generated epub, defaults to "dist/<book-url-slug>.epub"
 
 Options:
   -V, --version               output the version number
-  -s, --start-with <chapter>  Chapter index to start with (default: 1)
+  -s, --start-with <chapter>  Chapter index to start with.
+                              Will be ignored when the <url> parameter is a chapter url (default: 1)
   -e, --end-with <chapter>    Chapter index to end with, defaults to the end of the book
   -o, --overwrite             overwrite the [out-file] if it already exists
   -O, --no-overwrite          do not overwrite the [out-file] if it already exists
@@ -44,6 +48,10 @@ Options:
   --cache-dir <dir>           Cache directory (default: "~/node_modules/.cache/scribblehub-to-epub")
   -h, --help                  display help for command
 ```
+
+## Changelog
+
+See changes between versions in the [Changelog](CHANGELOG.md).
 
 ## Report bugs and feature requests
 

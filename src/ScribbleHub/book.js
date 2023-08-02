@@ -24,7 +24,6 @@ export class Book {
   constructor (url, cacheDir) {
     this.url = url
     this._cacheDir = cacheDir
-    this._assetDownloader = new AssetDownloader(this.prepareCacheDir())
   }
 
   /**
@@ -58,7 +57,11 @@ export class Book {
   async loadChapters (startWith, endWith) {
     if (this.chapters === undefined) {
       this.chapters = (async () => {
-        const chapterUrls = (await this.getChapterUrls()).slice(startWith - 1, endWith)
+        let chapterUrls = (await this.getChapterUrls())
+        if (this._startingChapterUrl !== undefined) {
+          startWith = chapterUrls.findIndex((url) => url.toString() === this._startingChapterUrl.toString()) + 1
+        }
+        chapterUrls = chapterUrls.slice(startWith - 1, endWith)
 
         const cacheDir = this.prepareCacheDir()
 
@@ -119,5 +122,39 @@ export class Book {
       fs.mkdirSync(directory, { recursive: true })
     }
     return directory
+  }
+
+  /**
+   * @return {Promise<void>}
+   */
+  async init () {
+    if (this._isChapterUrl(this.url)) {
+      this._startingChapterUrl = this.url
+
+      const page = await fetch(this.url.toString())
+      const $ = cheerio.load(await page.text())
+      this.url = new URL($('.c_index a').attr('href'))
+    } else if (!this._isMainUrl(this.url)) {
+      throw Error('Not a valid scribblehub url')
+    }
+    this._assetDownloader = new AssetDownloader(this.prepareCacheDir())
+  }
+
+  /**
+   * @param {URL} url
+   * @return {boolean}
+   * @private
+   */
+  _isChapterUrl (url) {
+    return url.toString().match(/^https:\/\/www\.scribblehub\.com\/read\/.+\/chapter\/\d+\/$/) !== null
+  }
+
+  /**
+   * @param {URL} url
+   * @return {boolean}
+   * @private
+   */
+  _isMainUrl (url) {
+    return url.toString().match(/^https:\/\/www\.scribblehub\.com\/series\/\d+\/.+\/$/) !== null
   }
 }

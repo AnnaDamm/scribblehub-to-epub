@@ -51,10 +51,11 @@ export class ImportCommand extends Command {
     this
       .version(packageJson.version)
       .description('Downloads a book from scribblehub.com and outputs it as an epub file')
-      .argument('<url>', 'base url of the Scribble Hub series, e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/"')
+      .argument('<url>', 'base url of the Scribble Hub series (e.g. "https://www.scribblehub.com/series/36420/the-fastest-man-alive/).' +
+        'Using a url of a chapter instead of the main page will start downloading on that chapter, overriding the "start-with" option')
       .argument('[out-file]', 'file name of the generated epub, defaults to "dist/<book-url-slug>.epub"')
 
-      .option('-s, --start-with <chapter>', 'Chapter index to start with', (value) => parseInt(value, 10), 1)
+      .option('-s, --start-with <chapter>', 'Chapter index to start with. Will be ignored when the <url> parameter is a chapter url', (value) => parseInt(value, 10), 1)
       .option('-e, --end-with <chapter>', 'Chapter index to end with, defaults to the end of the book', (value) => value ? parseInt(value, 10) : undefined, undefined)
 
       .option('-o, --overwrite', 'overwrite the [out-file] if it already exists')
@@ -83,6 +84,7 @@ export class ImportCommand extends Command {
 
     const exporter = new Exporter()
     const book = new Book(new URL(urlString), options.cacheDir)
+    await book.init()
 
     const outFilePath = await this.prepareOutFile(book)
 
