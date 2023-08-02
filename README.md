@@ -20,6 +20,7 @@ scribblehub-to-epub --help
 
 `<scribblehub-url>` refers to the main page of a story, looking like this: `https://www.scribblehub.com/series/<id>/<name>/,`
 e.g: `https://www.scribblehub.com/series/36420/the-fastest-man-alive/`.
+If you use a chapter url instead of a main url, it will start downloading from that chapter.
 
 ### All CLI Parameters
 
