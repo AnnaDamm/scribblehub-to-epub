@@ -55,7 +55,9 @@
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0"
   },
-  "bin": "src/index.js",
+  "bin": {
+    "scribblehub-to-epub": "src/index.js"
+  },
   "files": [
     "assets",
     "src"
