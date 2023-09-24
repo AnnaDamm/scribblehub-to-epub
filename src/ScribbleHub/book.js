@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
-import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.js'
-import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js'
-import { eventEmitter } from '../Events/event-emitter.js'
-import { MainPageLoaded, mainPageLoaded } from '../Events/main-page-loaded.js'
+import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../Events/chapter-loading-finished.ts'
+import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.ts'
+import { eventEmitter } from '../Events/event-emitter.ts'
+import { MainPageLoaded, mainPageLoaded } from '../Events/main-page-loaded.ts'
 import { AssetDownloader } from './asset-downloader.js'
-import { BookMetadata } from './book-metadata.js'
+import { BookMetadataModel } from '../book.metadata.model.ts'
 import { Chapter } from './chapter.js'
 import * as cheerio from 'cheerio'
 import { throttleAll } from 'promise-throttle-all'
@@ -27,12 +27,12 @@ export class Book {
   }
 
   /**
-   * @returns {Promise<BookMetadata>}
+   * @returns {Promise<BookMetadataModel>}
    */
   async getBookMetaData () {
     if (this._bookMetaData === undefined) {
       this._bookMetaData = (async () => {
-        const bookMetadata = new BookMetadata()
+        const bookMetadata = new BookMetadataModel()
         await bookMetadata.load(this.url)
         eventEmitter.emit(mainPageLoaded, new MainPageLoaded(this))
         return bookMetadata

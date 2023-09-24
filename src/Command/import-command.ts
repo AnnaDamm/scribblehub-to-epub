@@ -2,14 +2,13 @@ import { SingleBar } from 'cli-progress'
 import { Command } from 'commander'
 import findCacheDirectory from 'find-cache-dir'
 import { createRequire } from 'module'
-import { chapterLoaded } from '../Events/chapter-loaded.js'
-import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js'
-import { chapterLoadingStarted } from '../Events/chapter-loading-started.js'
-import { allEvents, eventEmitter } from '../Events/event-emitter.js'
+import { chapterLoaded } from '../Events/chapter-loaded.ts'
+import { chapterLoadingFinished } from '../Events/chapter-loading-finished.ts'
+import { chapterLoadingStarted } from '../Events/chapter-loading-started.ts'
+import { allEvents, eventEmitter } from '../Events/event-emitter.ts'
 import { Exporter } from '../Exporter/exporter.js'
 import { OutFile } from '../Exporter/out-file.js'
 import { Book } from '../ScribbleHub/book.js'
-import { Verbosity } from './constants.js'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -19,6 +18,13 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const commandName = 'scribblehub-to-epub'
+
+export const Verbosity = {
+  quiet: -1,
+  normal: 0,
+  verbose: 1,
+  veryVerbose: 2
+}
 
 /**
  * @typedef {Object} ParsedOptions

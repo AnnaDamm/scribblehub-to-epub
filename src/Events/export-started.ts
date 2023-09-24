@@ -1,16 +1,10 @@
+import { Book } from '../sites/book.models.js';
 import { BaseEvent } from './base-event.js'
 
 export const exportStarted = Symbol('exportStarted')
 
-/**
- * @property {Book} book
- */
 export class ExportStartedEvent extends BaseEvent {
-  /**
-   * @param {Book} book
-   */
-  constructor (book) {
+  constructor (public readonly book: Book) {
     super()
-    this.book = book
   }
 }

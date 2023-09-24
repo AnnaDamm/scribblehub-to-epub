@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { eventEmitter } from '../Events/event-emitter.js'
-import { exportStarted, ExportStartedEvent } from '../Events/export-started.js'
+import { eventEmitter } from '../Events/event-emitter.ts'
+import { exportStarted, ExportStartedEvent } from '../Events/export-started.ts'
 import { EPub } from 'epub-gen-memory'
 
 const __filename = fileURLToPath(import.meta.url)

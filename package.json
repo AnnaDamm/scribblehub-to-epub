@@ -6,12 +6,10 @@
   "type": "module",
   "scripts": {
     "run": "node src/index.js",
-    "lint": "npm run lint:css && npm run lint:js && npm run lint:md",
-    "lint:fix": "npm run lint:css:fix && npm run lint:js:fix && npm run lint:md:fix",
+    "lint": "npm run lint:css && npm run lint:md",
+    "lint:fix": "npm run lint:css:fix && npm run lint:md:fix",
     "lint:css": "stylelint \"assets/styles/**/*.css\"",
     "lint:css:fix": "npm run lint:css -- --fix",
-    "lint:js": "standard",
-    "lint:js:fix": "npm run lint:js -- --fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "lint:md:fix": "npm run lint:md -- --fix",
     "scribblehub-to-epub": "npm run run"
@@ -45,11 +43,14 @@
   "homepage": "https://github.com/AnnaDamm/scribblehub-to-epub/",
   "bugs": "https://github.com/AnnaDamm/scribblehub-to-epub/issues",
   "devDependencies": {
+    "@tsconfig/node16": "^16.1.1",
+    "@types/cheerio": "^0.22.32",
+    "@types/cli-progress": "^3.11.2",
+    "@types/find-cache-dir": "^5.0.0",
     "markdownlint-cli": "^0.33.0",
     "pre-commit": "^1.2.2",
-    "standard": "^17.0.0",
     "stylelint": "^14.16.1",
-    "stylelint-config-standard": "^29.0.0"
+    "typescript": "^5.2.2"
   },
   "bin": {
     "scribblehub-to-epub": "src/index.js"
