@@ -50,6 +50,7 @@ export class ImportCommand extends Command {
 
     constructor() {
         super('scribble-to-epub')
+        // noinspection HtmlDeprecatedTag,XmlDeprecatedElement
         this
             .version(packageJson.version)
             .description('Downloads a book from scribblehub.com and outputs it as an epub file')
