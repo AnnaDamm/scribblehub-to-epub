@@ -1,5 +1,5 @@
-import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../Events/book-metadata-loaded.js';
-import { eventEmitter } from '../Events/event-emitter.js';
+import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../../Events/book-metadata-loaded.js';
+import { eventEmitter } from '../../Events/event-emitter.js';
 import { BookMetadata } from './book.models.js';
 
 export abstract class MetadataLoader {

@@ -1,12 +1,12 @@
 import fs from 'fs'
 import path from 'path'
-import { fileCache } from '../Cache/file-cache.js'
-import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../Events/chapter-loaded-from-cache.ts'
-import { chapterLoaded, ChapterLoadedEvent } from '../Events/chapter-loaded.ts'
-import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../Events/chapter-written-to-cache.ts'
-import { eventEmitter } from '../Events/event-emitter.ts'
+import { fileCache } from '../../Cache/file-cache.js'
+import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../../Events/chapter-loaded-from-cache.js'
+import { chapterLoaded, ChapterLoadedEvent } from '../../Events/chapter-loaded.js'
+import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../../Events/chapter-written-to-cache.js'
+import { eventEmitter } from '../../Events/event-emitter.js'
 import * as cheerio from 'cheerio'
-import { cleanContents } from '../Cheerio/clean-contents.ts'
+import { cleanContents } from '../../Cheerio/clean-contents.js'
 
 /**
  * @property {URL} url

@@ -1,4 +1,4 @@
-import { Chapter } from '../sites/book.models.js';
+import { Chapter } from '../sites/Base/book.models.js';
 import { BaseEvent } from './base-event.js'
 
 export const chapterLoadingFinished = Symbol('chapterLoadingFinished')

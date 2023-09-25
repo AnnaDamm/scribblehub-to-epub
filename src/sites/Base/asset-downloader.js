@@ -1,10 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import stream from 'stream'
-import { assetAlreadyDownloaded, AssetAlreadyDownloadedEvent } from '../Events/asset-already-download.js'
-import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../Events/asset-download-finished.ts'
-import { assetDownloadStarted, AssetDownloadStartedEvent } from '../Events/asset-download-started.ts'
-import { eventEmitter } from '../Events/event-emitter.ts'
+import { assetAlreadyDownloaded, AssetAlreadyDownloadedEvent } from '../../Events/asset-already-download.js'
+import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../../Events/asset-download-finished.js'
+import { assetDownloadStarted, AssetDownloadStartedEvent } from '../../Events/asset-download-started.js'
+import { eventEmitter } from '../../Events/event-emitter.js'
 import { createHash } from 'crypto'
 
 export class AssetDownloader {

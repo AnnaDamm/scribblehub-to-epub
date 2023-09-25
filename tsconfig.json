@@ -1,8 +1,18 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "lib": ["dom"],
-    "rootDir": "ts-src",
-    "outDir": "dist"
-  }
+    "lib": [
+      "dom"
+    ],
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "target": "esnext",
+    "module": "nodenext",
+    "sourceMap": true
+  },
+  "assets": [
+    "assets"
+  ]
 }

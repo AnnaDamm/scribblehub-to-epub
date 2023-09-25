@@ -1,4 +1,4 @@
-import { Book } from '../sites/book.models.js';
+import { Book } from '../sites/Base/book.models.js';
 import { BaseEvent } from './base-event.js'
 
 export const mainPageLoaded = Symbol('mainPageLoaded')

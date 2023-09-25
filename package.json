@@ -2,16 +2,20 @@
   "name": "@annadamm/scribblehub-to-epub",
   "version": "2.3.1",
   "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "run": "node src/index.js",
-    "lint": "npm run lint:css && npm run lint:md",
-    "lint:fix": "npm run lint:css:fix && npm run lint:md:fix",
+    "build": "rm -rf dist && tsc && cp -r assets dist",
+    "prepublish": "npm run build",
+    "run": "node dist/src/index.jso",
+    "lint": "npm run lint:css && npm run lint:md && npm run lint:ts",
+    "lint:fix": "npm run lint:css:fix && npm run lint:md:fix && npm run lint:ts:fix",
     "lint:css": "stylelint \"assets/styles/**/*.css\"",
     "lint:css:fix": "npm run lint:css -- --fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "lint:md:fix": "npm run lint:md -- --fix",
+    "lint:ts": "eslint src",
+    "lint:ts:fix": "npm run lint:ts -- --fix",
     "scribblehub-to-epub": "npm run run"
   },
   "keywords": [
@@ -36,7 +40,7 @@
     "cli-progress": "^3.11.2",
     "commander": "^9.5.0",
     "epub-gen-memory": "^1.0.10",
-    "find-cache-dir": "^4.0.0",
+    "find-cache-dir": "^5.0.0",
     "promise-throttle-all": "^1.1.1",
     "yesno": "^0.4.0"
   },
@@ -46,25 +50,27 @@
     "@tsconfig/node16": "^16.1.1",
     "@types/cheerio": "^0.22.32",
     "@types/cli-progress": "^3.11.2",
-    "@types/find-cache-dir": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
     "markdownlint-cli": "^0.33.0",
     "pre-commit": "^1.2.2",
-    "stylelint": "^14.16.1",
+    "stylelint": "^15.10.3",
+    "stylelint-config-standard": "^34.0.0",
     "typescript": "^5.2.2"
   },
   "bin": {
-    "scribblehub-to-epub": "src/index.js"
+    "scribblehub-to-epub": "dist/src/index.js"
   },
   "files": [
-    "assets",
-    "src/**/*.js"
+    "dist/assets",
+    "dist/**/*.{js,json}"
   ],
-  "standard": {
-    "ignore": [
-      "dist"
-    ]
-  },
   "pre-commit": [
     "lint:fix"
-  ]
+  ],
+  "engines": {
+    "node": ">=18.0 <20.0 || >=20.2",
+    "npm": ">=8.0"
+  }
 }
