@@ -8,7 +8,7 @@
     "build": "npm run prepare-dir && tsc",
     "build:watch": "npm run build -- --watch",
     "prepare-dir": "rm -rf dist && mkdir -p dist && cp -r assets dist/assets",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "run": "node dist/src/index.js",
     "lint": "npm run lint:css && npm run lint:md && npm run lint:ts",
     "lint:fix": "npm run lint:css:fix && npm run lint:md:fix && npm run lint:ts:fix",
@@ -65,6 +65,7 @@
     "scribblehub-to-epub": "dist/src/index.js"
   },
   "files": [
+    "*.md",
     "dist/assets",
     "dist/**/*.{js,json}"
   ],
