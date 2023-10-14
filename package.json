@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "rm -rf dist && cp -r assets dist && tsc",
+    "build:watch": "npm run build -- --watch",
     "prepublish": "npm run build",
     "run": "node dist/src/index.js",
     "lint": "npm run lint:css && npm run lint:md && npm run lint:ts",
@@ -42,6 +43,7 @@
     "epub-gen-memory": "^1.0.10",
     "find-cache-dir": "^5.0.0",
     "promise-throttle-all": "^1.1.1",
+    "typescript-memoize": "^1.1.1",
     "yesno": "^0.4.0"
   },
   "homepage": "https://github.com/AnnaDamm/scribblehub-to-epub/",
@@ -72,5 +74,6 @@
   "engines": {
     "node": ">=18.0 <20.0 || >=20.2",
     "npm": ">=8.0"
-  }
+  },
+  "engineStrict": true
 }

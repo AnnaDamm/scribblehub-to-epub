@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0
+### Changes
+- Refactored into Typescript
+
 ## 2.3
 
 ### Changes

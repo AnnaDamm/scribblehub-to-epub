@@ -76,9 +76,8 @@ export class ImportCommand extends Command {
 
         const exporter = new Exporter()
         const book = new Book(new URL(urlString), options.cacheDir)
-        await book.init()
 
-        await book.loadChapters(options.startWith, options.endWith)
+        await book.getChapters(options.startWith, options.endWith)
         await exporter.export(book, await this.prepareOutFile(book, outFilePath, inputOptions), {
             verbose: inputOptions.verbosity >= Verbosity.verbose
         })

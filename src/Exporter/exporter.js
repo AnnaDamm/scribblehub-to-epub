@@ -36,7 +36,7 @@ export class Exporter {
       author: bookMetaData.authorName,
       publisher: bookMetaData.publisher,
       description: bookMetaData.description,
-      cover: 'file://' + await book.loadCover(),
+      cover: 'file://' + await book.getCover(),
       numberChaptersInTOC: false,
       date: bookMetaData.date.toISOString(),
       css: fs.readFileSync(path.resolve(assetPath, 'styles', 'scribblehub.css')).toString(),

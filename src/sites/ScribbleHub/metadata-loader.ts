@@ -3,7 +3,7 @@ import { cleanContents } from '../../Cheerio/clean-contents.js';
 import { MetadataLoader as BaseMetaDataLoader } from '../Base/metadata-loader.js'
 import { BookMetadata } from './book-metadata.model.js';
 
-export class MetadataLoader extends BaseMetaDataLoader {
+export class MetadataLoader extends BaseMetaDataLoader<BookMetadata> {
     protected async loadData(url: URL): Promise<BookMetadata> {
         const page = await fetch(url.toString())
         const $ = cheerio.load(await page.text())
@@ -64,5 +64,4 @@ export class MetadataLoader extends BaseMetaDataLoader {
 
         return date
     }
-
 }

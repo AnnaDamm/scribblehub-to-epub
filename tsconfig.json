@@ -4,6 +4,7 @@
     "lib": [
       "dom"
     ],
+    "experimentalDecorators": true,
     "outDir": "dist",
     "resolveJsonModule": true,
     "allowJs": true,
