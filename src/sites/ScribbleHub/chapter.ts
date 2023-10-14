@@ -22,17 +22,6 @@ export class Chapter implements ChapterModel {
     ) {
     }
 
-    /**
-     * @returns {number}
-     */
-    get id(): number {
-        const chapterId = this.url.pathname.match(/chapter\/(?<id>\d+)\/?/);
-        if (!chapterId?.groups) {
-            throw new Error('chapter id not found');
-        }
-        return parseInt(chapterId.groups.id)
-    }
-
     @Memoize()
     public async load(): Promise<typeof this> {
         if (!await this.loadFromCache()) {
@@ -61,7 +50,7 @@ export class Chapter implements ChapterModel {
         this.text = cleanContents($('#chp_raw')).html()!
     }
 
-    public async loadFromCache(): Promise<boolean> {
+    private async loadFromCache(): Promise<boolean> {
         try {
             const data = JSON.parse(await fileCache.readString(this.cacheFilePath))
 
@@ -88,6 +77,14 @@ export class Chapter implements ChapterModel {
             text: this.text
         }))
         eventEmitter.emit(chapterWrittenToCache, new ChapterWrittenToCacheEvent(this))
+    }
+
+    private get id(): number {
+        const chapterId = this.url.pathname.match(/chapter\/(?<id>\d+)\/?/);
+        if (!chapterId?.groups) {
+            throw new Error('chapter id not found');
+        }
+        return parseInt(chapterId.groups.id)
     }
 
     private get cacheFilePath(): string {

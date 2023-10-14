@@ -12,7 +12,9 @@ export interface BookMetadata {
 
 export interface Book {
     url: URL;
-    chapters: Chapter[];
+    getBookMetaData: () => Promise<BookMetadata>;
+    getCover: () => Promise<string>;
+    getChapters: (startWith: number, endWith: number | undefined) => Promise<Chapter[]>;
 }
 
 export interface Chapter {
@@ -20,4 +22,6 @@ export interface Chapter {
     index: number;
     title?: string | null;
     text?: string;
+
+    load: () => Promise<Chapter>;
 }

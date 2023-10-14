@@ -8,17 +8,18 @@ import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../../Events/
 import { eventEmitter } from '../../Events/event-emitter.js'
 import { MainPageLoaded, mainPageLoaded } from '../../Events/main-page-loaded.js'
 import { AssetDownloader } from '../Base/asset-downloader.js'
+import { Book as BookModel } from '../Base/book.models.js';
 import { BookMetadata } from './book-metadata.model.js';
 import { Chapter } from './chapter.js'
 import { MetadataLoader } from './metadata-loader.js';
 
 const allChaptersPath = '/wp-admin/admin-ajax.php'
 
-export class Book {
+export class Book implements BookModel {
     private readonly startingChapterUrl: URL | undefined;
 
     constructor(
-        private url: URL,
+        public url: URL,
         private readonly cacheDir: string
     ) {
         if (this.isChapterUrl(url)) {
@@ -41,7 +42,7 @@ export class Book {
     }
 
     @Memoize()
-    public async getChapters(startWith: number, endWith: number | undefined) {
+    public async getChapters(startWith: number, endWith: number | undefined): Promise<Chapter[]> {
         await this.init()
         let chapterUrls = (await this.getChapterUrls())
         if (this.startingChapterUrl !== undefined) {
