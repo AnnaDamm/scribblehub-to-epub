@@ -7,10 +7,10 @@ import { fileURLToPath } from 'url'
 import packageJson from '../../package.json' assert { type: 'json' };
 import { chapterLoaded } from '../Events/chapter-loaded.js';
 import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js';
-import { chapterLoadingStarted } from '../Events/chapter-loading-started.js';
+import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js';
 import { allEvents, eventEmitter } from '../Events/event-emitter.js';
 import { Exporter } from '../Exporter/exporter.js';
-import { OutFile } from '../Exporter/out-file.js';
+import { outFile } from '../Exporter/out-file.js';
 import { Book } from '../sites/ScribbleHub/book.js';
 
 const __filename = fileURLToPath(import.meta.url)
@@ -45,9 +45,6 @@ interface InputOptions {
 }
 
 export class ImportCommand extends Command {
-    private outFile?: string;
-    private inputOptions?: InputOptions;
-
     constructor() {
         super('scribble-to-epub')
         // noinspection HtmlDeprecatedTag,XmlDeprecatedElement
@@ -65,28 +62,25 @@ export class ImportCommand extends Command {
             .option('-O, --no-overwrite', 'do not overwrite the [out-file] if it already exists')
             .option('-P, --no-progress', 'do not show a progress bar')
 
-            .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (dummyValue, previous) => previous + 1, 0)
+            .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (_, previous) => previous + 1, 0)
             .option('-q, --quiet', 'do not output anything', false)
 
             .option('--cache-dir <dir>', 'Cache directory', this.defaultCacheDir)
             .action(this.run)
     }
 
-    private async run(urlString: string, outFile: string | undefined, options: ParsedOptions): Promise<void> {
-        this.outFile = outFile
-        this.inputOptions = this.mapOptions(options)
+    private async run(urlString: string, outFilePath: string | undefined, options: ParsedOptions): Promise<void> {
+        const inputOptions = this.mapOptions(options)
 
-        this.addOutputEventHandlers()
+        this.addOutputEventHandlers(inputOptions)
 
         const exporter = new Exporter()
         const book = new Book(new URL(urlString), options.cacheDir)
         await book.init()
 
-        const outFilePath = await this.prepareOutFile(book)
-
         await book.loadChapters(options.startWith, options.endWith)
-        await exporter.export(book, outFilePath, {
-            verbose: this.inputOptions.verbosity >= Verbosity.verbose
+        await exporter.export(book, await this.prepareOutFile(book, outFilePath, inputOptions), {
+            verbose: inputOptions.verbosity >= Verbosity.verbose
         })
     }
 
@@ -108,47 +102,51 @@ export class ImportCommand extends Command {
         return options;
     }
 
-    private addOutputEventHandlers(): void {
-        if (this.inputOptions!.verbosity >= Verbosity.veryVerbose) {
+    private addOutputEventHandlers(inputOptions: InputOptions): void {
+        if (inputOptions.verbosity >= Verbosity.veryVerbose) {
             eventEmitter.addListener(allEvents, (e) => this.write(e.toString()))
         }
 
-        if (this.inputOptions!.progress) {
+        if (inputOptions.progress) {
             const chapterProgressBar = new SingleBar({
-                format: '[{bar}] {percentage}% | {value}/{total} | Time: {duration_formatted}' + (this.inputOptions!.verbosity >= Verbosity.veryVerbose ? '\n\n' : '')
+                format: '[{bar}] {percentage}% | {value}/{total} | Time: {duration_formatted}' + (inputOptions.verbosity >= Verbosity.veryVerbose ? '\n\n' : '')
             })
             eventEmitter.addListener(chapterLoadingStarted,
-                /** @param {ChapterLoadingStartedEvent} chapterLoadingStarted */
-                (chapterLoadingStarted) => {
-                    this.write('Downloading chapters...')
+                (chapterLoadingStarted: ChapterLoadingStartedEvent) => {
+                    this.write(inputOptions, 'Downloading chapters...')
                     chapterProgressBar.start(chapterLoadingStarted.totalAmount, 0)
                 }
             )
             eventEmitter.addListener(chapterLoaded, () => chapterProgressBar.increment())
             eventEmitter.addListener(chapterLoadingFinished, () => {
                 chapterProgressBar.stop()
-                this.write('Done.')
+                this.write(inputOptions, 'Done.')
             })
-        } else if (this.inputOptions!.verbosity >= Verbosity.verbose) {
-            eventEmitter.addListener(chapterLoadingStarted, () => this.write('Downloading chapters...'))
-            eventEmitter.addListener(chapterLoadingFinished, () => this.write('Done.'))
+        } else if (inputOptions.verbosity >= Verbosity.verbose) {
+            eventEmitter.addListener(chapterLoadingStarted, () => this.write(inputOptions, 'Downloading chapters...'))
+            eventEmitter.addListener(chapterLoadingFinished, () => this.write(inputOptions, 'Done.'))
         }
     }
 
-    private prepareOutFile(book: Book): Promise<string> {
-        return OutFile.prepareOutFile(
-            this.outFile!,
+    private prepareOutFile(
+        book: Book,
+        outFilePath: string | undefined,
+        inputOptions: InputOptions
+    ): Promise<string> {
+        return outFile.prepareOutFile(
+            outFilePath,
             async () => (await book.getBookMetaData()).slug,
-            this.inputOptions!.overwrite
+            inputOptions.overwrite
         )
     }
 
     private write(
+        inputOptions: InputOptions,
         string: string = '',
         verbosity: Verbosity = Verbosity.normal,
-        addNewLine: boolean = true
+        addNewLine: boolean = true,
     ): void {
-        if (this.inputOptions!.verbosity >= verbosity) {
+        if (inputOptions.verbosity >= verbosity) {
             process.stdout.write(string + (addNewLine ? '\n' : ''));
         }
     }
