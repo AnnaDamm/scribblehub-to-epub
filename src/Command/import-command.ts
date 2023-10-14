@@ -159,6 +159,6 @@ export class ImportCommand extends Command {
             throw Error('Could not find cache directory');
         }
 
-        return path.resolve(cacheDir, '3')
+        return path.resolve(cacheDir, '4')
     }
 }

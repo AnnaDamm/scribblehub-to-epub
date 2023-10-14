@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio'
 import path from 'path'
 import { Memoize } from 'typescript-memoize';
 import { fileCache } from '../../Cache/file-cache.js'
-import { cleanContents } from '../../Cheerio/clean-contents.js'
+import { cleanContents } from './clean-contents.js'
 import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../../Events/chapter-loaded-from-cache.js'
 import { chapterLoaded, ChapterLoadedEvent } from '../../Events/chapter-loaded.js'
 import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../../Events/chapter-written-to-cache.js'
@@ -28,6 +28,8 @@ export class Chapter implements ChapterModel {
             await this.loadFromWeb()
             await this.writeToCache()
         }
+        const $ = cheerio.load(this.text)
+        this.text = cleanContents($.root()).html()!;
 
         eventEmitter.emit(chapterLoaded, new ChapterLoadedEvent(this))
         return this;
@@ -47,7 +49,7 @@ export class Chapter implements ChapterModel {
         }
 
         await this.assetDownloader.fetchImagesFromQuery($, '#chp_contents img[src]')
-        this.text = cleanContents($('#chp_raw')).html()!
+        this.text = $('#chp_raw').html()!
     }
 
     private async loadFromCache(): Promise<boolean> {
