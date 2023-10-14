@@ -55,9 +55,8 @@ export class Book {
 
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
         const chapters = throttleAll(50, chapterUrls.map((url, index) => async () => {
-            const chapter = new Chapter(url, index + startWith, await cacheDir)
-            await chapter.load(this.assetDownloader)
-            return chapter
+            const chapter = new Chapter(url, index + startWith, await cacheDir, this.assetDownloader)
+            return chapter.load()
         }))
         chapters.then((chapters) => {
             eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))

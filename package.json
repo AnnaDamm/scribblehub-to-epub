@@ -5,8 +5,9 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "rm -rf dist && cp -r assets dist && tsc",
+    "build": "npm run prepare-dir && tsc",
     "build:watch": "npm run build -- --watch",
+    "prepare-dir": "rm -rf dist && mkdir -p dist && cp -r assets dist/assets",
     "prepublish": "npm run build",
     "run": "node dist/src/index.js",
     "lint": "npm run lint:css && npm run lint:md && npm run lint:ts",
@@ -16,8 +17,7 @@
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "lint:md:fix": "npm run lint:md -- --fix",
     "lint:ts": "eslint src",
-    "lint:ts:fix": "npm run lint:ts -- --fix",
-    "scribblehub-to-epub": "npm run run"
+    "lint:ts:fix": "npm run lint:ts -- --fix"
   },
   "keywords": [
     "scribblehub",
