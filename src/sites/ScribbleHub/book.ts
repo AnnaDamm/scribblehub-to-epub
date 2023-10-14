@@ -31,6 +31,7 @@ export class Book implements BookModel {
 
     @Memoize()
     public async getBookMetaData(): Promise<BookMetadata> {
+        await this.init();
         const bookMetadata = await new MetadataLoader().load(this.url)
         eventEmitter.emit(mainPageLoaded, new MainPageLoaded(bookMetadata))
         return bookMetadata
@@ -75,8 +76,9 @@ export class Book implements BookModel {
                 mypostid: (await this.getBookMetaData()).postId.toString()
             })
         })
-        const $ = cheerio.load(await response.text())
-        return (<{ order: number, url: URL }[]>(<unknown>$('.toc_w')
+        const html = await response.text();
+        const $ = cheerio.load(html);
+        return (<{ order: number, url: URL }[]><unknown>$('.toc_w')
             .map((_, node) => {
                 const order = $(node).attr('order');
                 const url = $(node).find('.toc_a').attr('href');
@@ -87,8 +89,8 @@ export class Book implements BookModel {
                     order: parseInt(order),
                     url: new URL(url)
                 }
-            }).filter(Boolean)
-            .toArray()))
+            })
+            .toArray())
             .sort((chapterA, chapterB) => Math.sign(chapterA.order - chapterB.order))
             .map((chapter) => chapter.url)
     }

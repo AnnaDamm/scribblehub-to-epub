@@ -6,9 +6,10 @@ import { BookMetadata } from './book-metadata.model.js';
 export class MetadataLoader extends BaseMetaDataLoader<BookMetadata> {
     protected async loadData(url: URL): Promise<BookMetadata> {
         const page = await fetch(url.toString())
-        const $ = cheerio.load(await page.text())
+        const html = await page.text()
+        const $ = cheerio.load(html)
 
-        const canonicalUrl = new URL($('meta[property="og:url"]').attr('content') ?? '');
+        const canonicalUrl = new URL($('meta[property="og:url"]').attr('content')!);
         const slug = canonicalUrl.toString().match(/.+\/(?<slug>.+?)\/$/)?.groups?.slug;
         const title = $('meta[property="og:title"]').attr('content');
         const coverUrl = new URL($('meta[property="og:image"]').attr('content') ?? '');

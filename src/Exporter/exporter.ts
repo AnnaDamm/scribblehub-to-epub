@@ -30,7 +30,7 @@ export class Exporter {
 
         const dataBuffer = await epub.genEpub()
 
-        fs.writeFileSync(outputFile, dataBuffer)
+        await fs.promises.writeFile(outputFile, dataBuffer)
     }
 
     private async buildContent(book: Book): Promise<Chapter[]> {
