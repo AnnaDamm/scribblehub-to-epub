@@ -20,6 +20,8 @@ export class Book implements BookModel {
 
     constructor(
         public url: URL,
+        private readonly startWith: number,
+        private readonly endWith: number | undefined,
         private readonly cacheDir: string
     ) {
         if (this.isChapterUrl(url)) {
@@ -42,23 +44,22 @@ export class Book implements BookModel {
     }
 
     @Memoize()
-    public async getChapters(startWith: number, endWith: number | undefined): Promise<Chapter[]> {
+    public async getChapters(): Promise<Chapter[]> {
         await this.init()
         let chapterUrls = (await this.getChapterUrls())
-        if (this.startingChapterUrl !== undefined) {
-            startWith = chapterUrls.findIndex(
-                (url) => url.toString() === this.startingChapterUrl!.toString()
-            ) + 1
-        }
-        chapterUrls = chapterUrls.slice(startWith - 1, endWith)
+        const startWith = this.startingChapterUrl !== undefined ? chapterUrls.findIndex(
+            (url) => url.toString() === this.startingChapterUrl!.toString()
+        ) + 1 : this.startWith;
 
-        const cacheDir = this.getCacheDir()
+        chapterUrls = chapterUrls.slice(startWith - 1, this.endWith)
 
         eventEmitter.emit(chapterLoadingStarted, new ChapterLoadingStartedEvent(chapterUrls.length))
-        const chapters = throttleAll(50, chapterUrls.map((url, index) => async () => {
-            const chapter = new Chapter(url, index + startWith, await cacheDir, this.assetDownloader)
-            return chapter.load()
-        }))
+        const chapters = throttleAll(
+            50,
+            chapterUrls.map((url, index) => async () =>
+                new Chapter(url, index + startWith, await this.getCacheDir(), this.assetDownloader).load()
+            )
+        )
         chapters.then((chapters) => {
             eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
         })

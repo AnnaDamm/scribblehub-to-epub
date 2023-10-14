@@ -11,8 +11,8 @@ import { AssetDownloader } from '../Base/asset-downloader.js';
 import { Chapter as ChapterModel } from '../Base/book.models.js'
 
 export class Chapter implements ChapterModel {
-    public text?: string;
-    public title?: string;
+    public text!: string;
+    public title!: string;
 
     constructor(
         public url: URL,

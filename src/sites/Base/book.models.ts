@@ -4,24 +4,24 @@ export interface BookMetadata {
     title: string,
     coverUrl: URL,
     date: Date,
-    description: string | null,
-    authorName: string | null,
-    publisher: string | null,
-    details: string | null,
+    description: string,
+    authorName: string,
+    publisher: string,
+    details: string,
 }
 
 export interface Book {
     url: URL;
     getBookMetaData: () => Promise<BookMetadata>;
     getCover: () => Promise<string>;
-    getChapters: (startWith: number, endWith: number | undefined) => Promise<Chapter[]>;
+    getChapters: () => Promise<Chapter[]>;
 }
 
 export interface Chapter {
     url: URL;
     index: number;
-    title?: string | null;
-    text?: string;
+    title: string;
+    text: string;
 
     load: () => Promise<Chapter>;
 }

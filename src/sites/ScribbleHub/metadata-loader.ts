@@ -13,12 +13,12 @@ export class MetadataLoader extends BaseMetaDataLoader<BookMetadata> {
         const title = $('meta[property="og:title"]').attr('content');
         const coverUrl = new URL($('meta[property="og:image"]').attr('content') ?? '');
         const date = this.parseUpdatedDate($('span[title^="Last updated:"]').attr('title'));
-        const description = $('meta[property="og:description"]').attr('content') ?? null;
+        const description = $('meta[property="og:description"]').attr('content')!;
         const postId = parseInt($('#mypostid').val(), 10);
         const authorId = parseInt($('#authorid').val(), 10);
-        const authorName = $('meta[name="twitter:creator"]').attr('content') ?? null;
-        const publisher = $('meta[property="og:site_name"]').attr('content') ?? null;
-        const details = cleanContents($('.fic_row.details')).html();
+        const authorName = $('meta[name="twitter:creator"]').attr('content')!;
+        const publisher = $('meta[property="og:site_name"]').attr('content')!;
+        const details = cleanContents($('.fic_row.details')).html()!;
 
         if (!slug) {
             throw new Error('slug not found');
