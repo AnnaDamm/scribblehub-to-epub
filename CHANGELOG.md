@@ -1,14 +1,16 @@
 # Changelog
 
 ## 3.0
+
 ### Changes
-- Refactored into Typescript
+
+- Refactored into TypeScript
 
 ## 2.3
 
 ### Changes
 
-- Using a chapter url as a starting point will now start downloading at that chapter
+- Using a chapter URL as a starting point will now start downloading at that chapter
 
 ## Bugfixes
 
