@@ -39,7 +39,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "cli-progress": "^3.11.2",
-    "commander": "^9.5.0",
+    "commander": "^11.1.0",
     "epub-gen-memory": "^1.0.10",
     "find-cache-dir": "^5.0.0",
     "promise-throttle-all": "^1.1.1",
