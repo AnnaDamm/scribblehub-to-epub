@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm run prepare-dir && tsc",
     "build:watch": "npm run build -- --watch",
-    "prepare-dir": "rm -rf dist && mkdir -p dist && cp -r assets dist/assets",
+    "prepare-dir": "rm -rf dist && mkdir dist && cp -r assets dist/assets",
     "prepare": "npm run build",
     "run": "node dist/src/index.js",
     "lint": "npm run lint:css && npm run lint:md && npm run lint:ts",
