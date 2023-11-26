@@ -5,6 +5,7 @@
       "dom"
     ],
     "experimentalDecorators": true,
+    "incremental": true,
     "outDir": "dist",
     "resolveJsonModule": true,
     "allowJs": true,
