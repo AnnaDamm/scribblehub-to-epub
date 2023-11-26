@@ -42,9 +42,11 @@ export class Exporter {
     private buildSynopsis(bookMetadata: BookMetadata): Chapter {
         return {
             title: 'Synopsis',
+            author: bookMetadata.authorName,
             content: bookMetadata.synopsis,
             filename: 'synopsis.html',
-            beforeToc: true
+            beforeToc: true,
+            excludeFromToc: true,
         }
     }
 
