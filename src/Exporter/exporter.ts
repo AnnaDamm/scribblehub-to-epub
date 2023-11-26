@@ -29,7 +29,7 @@ export class Exporter {
 
     private async buildContent(book: Book): Promise<Chapter[]> {
         const chapters = [
-            this.buildDetailsChapter(await book.getBookMetaData())
+            this.buildSynopsis(await book.getBookMetaData())
         ]
         const bookChapters = await book.getChapters()
         for (const chapter of bookChapters) {
@@ -39,10 +39,10 @@ export class Exporter {
         return chapters
     }
 
-    private buildDetailsChapter(bookMetadata: BookMetadata): Chapter {
+    private buildSynopsis(bookMetadata: BookMetadata): Chapter {
         return {
             title: 'Synopsis',
-            content: bookMetadata.details,
+            content: bookMetadata.synopsis,
             filename: 'synopsis.html',
             beforeToc: true
         }

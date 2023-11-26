@@ -7,7 +7,7 @@ export interface BookMetadata {
     description: string,
     authorName: string,
     publisher: string,
-    details: string,
+    synopsis: string,
 }
 
 export interface Book {
