@@ -1,20 +1,14 @@
-import { SingleBar } from 'cli-progress'
-import { Command } from 'commander'
-import findCacheDirectory from 'find-cache-dir';
+import {SingleBar} from 'cli-progress'
+import {Command} from 'commander'
 import * as path from 'path'
-import { fileURLToPath } from 'url'
-
-import packageJson from '../../package.json' assert { type: 'json' };
-import { chapterLoaded } from '../Events/chapter-loaded.js';
-import { chapterLoadingFinished } from '../Events/chapter-loading-finished.js';
-import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../Events/chapter-loading-started.js';
-import { allEvents, eventEmitter } from '../Events/event-emitter.js';
-import { Exporter } from '../Exporter/exporter.js';
-import { outFile } from '../Exporter/out-file.js';
-import { Book } from '../sites/ScribbleHub/book.js';
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+import {chapterLoaded} from '../Events/chapter-loaded.js';
+import {chapterLoadingFinished} from '../Events/chapter-loading-finished.js';
+import {chapterLoadingStarted, ChapterLoadingStartedEvent} from '../Events/chapter-loading-started.js';
+import {allEvents, eventEmitter} from '../Events/event-emitter.js';
+import {Exporter} from '../Exporter/exporter.js';
+import {outFile} from '../Exporter/out-file.js';
+import {Book} from '../sites/ScribbleHub/book.js';
+import packageJson from '../../package.json';
 
 const commandName = 'scribblehub-to-epub'
 
@@ -46,7 +40,10 @@ interface InputOptions {
 
 export class ImportCommand extends Command {
     constructor() {
-        super('scribble-to-epub')
+        super(commandName)
+    }
+
+    public async init(): Promise<void> {
         // noinspection HtmlDeprecatedTag,XmlDeprecatedElement
         this
             .version(packageJson.version)
@@ -65,7 +62,7 @@ export class ImportCommand extends Command {
             .option('-v, --verbose', 'verbosity that can be increased (-v, -vv, -vvv)', (_, previous) => previous + 1, 0)
             .option('-q, --quiet', 'do not output anything', false)
 
-            .option('--cache-dir <dir>', 'Cache directory', this.defaultCacheDir)
+            .option('--cache-dir <dir>', 'Cache directory', await this.getDefaultCacheDir())
             .action(this.run)
     }
 
@@ -149,7 +146,8 @@ export class ImportCommand extends Command {
         }
     }
 
-    private get defaultCacheDir(): string {
+    private async getDefaultCacheDir(): Promise<string> {
+        const findCacheDirectory = (await import('find-cache-dir')).default;
         const cacheDir = findCacheDirectory({
             name: commandName,
             cwd: __dirname

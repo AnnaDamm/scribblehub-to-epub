@@ -15,6 +15,7 @@ export interface Book {
     getBookMetaData: () => Promise<BookMetadata>;
     getCover: () => Promise<string>;
     getChapters: () => Promise<Chapter[]>;
+    getStyles: () => Promise<string>;
 }
 
 export interface Chapter {

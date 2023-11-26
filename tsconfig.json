@@ -12,8 +12,5 @@
     "target": "esnext",
     "module": "nodenext",
     "sourceMap": true
-  },
-  "assets": [
-    "assets"
-  ]
+  }
 }

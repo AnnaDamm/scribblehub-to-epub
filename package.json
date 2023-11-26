@@ -2,8 +2,7 @@
   "name": "@annadamm/scribblehub-to-epub",
   "version": "3.0.0-1",
   "description": "Downloads a book from scribblehub.com and outputs it as an epub file",
-  "main": "dist/index.js",
-  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "build": "npm run prepare-dir && tsc",
     "build:watch": "npm run build -- --watch",
@@ -36,16 +35,6 @@
     "url": "git+https://github.com/AnnaDamm/scribblehub-to-epub.git"
   },
   "license": "ISC",
-  "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "cli-progress": "^3.12.0",
-    "commander": "^11.1.0",
-    "epub-gen-memory": "^1.0.10",
-    "find-cache-dir": "^5.0.0",
-    "promise-throttle-all": "^1.1.1",
-    "typescript-memoize": "^1.1.1",
-    "yesno": "^0.4.0"
-  },
   "homepage": "https://github.com/AnnaDamm/scribblehub-to-epub/",
   "bugs": "https://github.com/AnnaDamm/scribblehub-to-epub/issues",
   "devDependencies": {
@@ -54,19 +43,32 @@
     "@types/cli-progress": "^3.11.5",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
+    "cheerio": "^1.0.0-rc.12",
+    "cli-progress": "^3.12.0",
+    "commander": "^11.1.0",
+    "epub-gen-memory": "^1.0.10",
     "eslint": "^8.54.0",
+    "find-cache-dir": "^5.0.0",
     "markdownlint-cli": "^0.37.0",
     "pre-commit": "^1.2.2",
+    "promise-throttle-all": "^1.1.1",
+    "raw-loader": "^4.0.2",
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
-    "typescript": "^5.3.2"
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.2",
+    "typescript-memoize": "^1.1.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0",
+    "yesno": "^0.4.0"
   },
   "bin": {
     "scribblehub-to-epub": "dist/src/index.js"
   },
   "files": [
     "*.md",
-    "dist/assets",
+    "*.txt",
     "dist/**/*.{js,json}"
   ],
   "pre-commit": [

@@ -1,19 +1,19 @@
 import * as cheerio from 'cheerio'
 import fs from 'fs'
 import path from 'path'
-import { throttleAll } from 'promise-throttle-all'
-import { Memoize } from 'typescript-memoize';
-import { chapterLoadingFinished, ChapterLoadingFinishedEvent } from '../../Events/chapter-loading-finished.js'
-import { chapterLoadingStarted, ChapterLoadingStartedEvent } from '../../Events/chapter-loading-started.js'
-import { eventEmitter } from '../../Events/event-emitter.js'
-import { MainPageLoaded, mainPageLoaded } from '../../Events/main-page-loaded.js'
-import { AssetDownloader } from '../Base/asset-downloader.js'
-import { Book as BookModel } from '../Base/book.models.js';
-import { BookMetadata } from './book-metadata.model.js';
-import { Chapter } from './chapter.js'
-import { MetadataLoader } from './metadata-loader.js';
+import {throttleAll} from 'promise-throttle-all'
+import {Memoize} from 'typescript-memoize';
+import {chapterLoadingFinished, ChapterLoadingFinishedEvent} from '../../Events/chapter-loading-finished.js'
+import {chapterLoadingStarted, ChapterLoadingStartedEvent} from '../../Events/chapter-loading-started.js'
+import {eventEmitter} from '../../Events/event-emitter.js'
+import {MainPageLoaded, mainPageLoaded} from '../../Events/main-page-loaded.js'
+import {AssetDownloader} from '../Base/asset-downloader.js'
+import {Book as BookModel} from '../Base/book.models.js';
+import {BookMetadata} from './book-metadata.model.js';
+import {Chapter} from './chapter.js'
+import {MetadataLoader} from './metadata-loader.js';
 
-const allChaptersPath = '/wp-admin/admin-ajax.php'
+const allChaptersPath = '/wp-admin/admin-ajax.php';
 
 export class Book implements BookModel {
     private readonly startingChapterUrl: URL | undefined;
@@ -65,6 +65,13 @@ export class Book implements BookModel {
             eventEmitter.emit(chapterLoadingFinished, new ChapterLoadingFinishedEvent(chapters))
         })
         return chapters
+    }
+
+    public async getStyles(): Promise<string> {
+        return fs.promises.readFile(
+            path.resolve(__dirname, '../../../assets/styles/scribblehub.css'),
+            'utf8'
+        );
     }
 
     private async getChapterUrls(): Promise<URL[]> {
