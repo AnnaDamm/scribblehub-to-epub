@@ -3,5 +3,7 @@
   "line-length": {
     "line_length": 120
   },
-  "no-duplicate-header": false
+  "no-duplicate-heading": {
+    "siblings_only": true
+  }
 }
