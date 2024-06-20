@@ -75,8 +75,8 @@
     "lint:fix"
   ],
   "engines": {
-    "node": ">=18.0 <20.0 || >=20.2",
-    "npm": ">=8.0"
+    "node": ">=22",
+    "npm": ">=10.0"
   },
   "engineStrict": true
 }
