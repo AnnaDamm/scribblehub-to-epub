@@ -40,7 +40,8 @@ export class Chapter implements ChapterModel {
         let $
         do {
             const response = await fetch(this.url.toString())
-            $ = cheerio.load(await response.text())
+            const text = await response.text()
+            $ = cheerio.load(text)
             this.title = $('.chapter-title').text()
         } while (!this.title && tries++ < 3)
 
