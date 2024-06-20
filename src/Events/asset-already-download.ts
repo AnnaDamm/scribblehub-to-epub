@@ -1,4 +1,4 @@
-import { BaseEvent } from './base-event.js'
+import { BaseEvent } from './base-event'
 
 export const assetAlreadyDownloaded = Symbol('assetAlreadyDownloaded')
 

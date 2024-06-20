@@ -1,8 +1,8 @@
 import {Chapter, EPub, Options} from 'epub-gen-memory'
 import fs from 'fs'
-import {eventEmitter} from '../Events/event-emitter.js'
-import {exportStarted, ExportStartedEvent} from '../Events/export-started.js'
-import {Book, BookMetadata, Chapter as ChapterModel} from '../sites/Base/book.models.js';
+import {eventEmitter} from '../Events/event-emitter'
+import {exportStarted, ExportStartedEvent} from '../Events/export-started'
+import {Book, BookMetadata, Chapter as ChapterModel} from '../sites/Base/book.models';
 
 export class Exporter {
     public async export(book: Book, outputFile: string, extraOptions: Partial<Options>): Promise<void> {

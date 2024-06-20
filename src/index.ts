@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { ImportCommand } from './Command/import-command.js';
+import { ImportCommand } from './Command/import-command';
 
 (async () => {
     const importCommand = new ImportCommand();

@@ -1,14 +1,14 @@
 import * as cheerio from 'cheerio'
 import path from 'path'
 import { Memoize } from 'typescript-memoize';
-import { fileCache } from '../../Cache/file-cache.js'
-import { cleanContents } from './clean-contents.js'
-import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../../Events/chapter-loaded-from-cache.js'
-import { chapterLoaded, ChapterLoadedEvent } from '../../Events/chapter-loaded.js'
-import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../../Events/chapter-written-to-cache.js'
-import { eventEmitter } from '../../Events/event-emitter.js'
-import { AssetDownloader } from '../Base/asset-downloader.js';
-import { Chapter as ChapterModel } from '../Base/book.models.js'
+import { fileCache } from '../../Cache/file-cache'
+import { cleanContents } from './clean-contents'
+import { chapterLoadedFromCache, ChapterLoadedFromCacheEvent } from '../../Events/chapter-loaded-from-cache'
+import { chapterLoaded, ChapterLoadedEvent } from '../../Events/chapter-loaded'
+import { chapterWrittenToCache, ChapterWrittenToCacheEvent } from '../../Events/chapter-written-to-cache'
+import { eventEmitter } from '../../Events/event-emitter'
+import { AssetDownloader } from '../Base/asset-downloader';
+import { Chapter as ChapterModel } from '../Base/book.models'
 
 export class Chapter implements ChapterModel {
     public text!: string;
@@ -90,6 +90,6 @@ export class Chapter implements ChapterModel {
     }
 
     private get cacheFilePath(): string {
-        return path.resolve(this.cacheDir, this.id + '.json.brotli')
+        return path.resolve(this.cacheDir, this.id + 'on.brotli')
     }
 }

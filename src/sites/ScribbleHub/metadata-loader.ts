@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
-import { cleanContents } from './clean-contents.js';
-import { MetadataLoader as BaseMetaDataLoader } from '../Base/metadata-loader.js'
-import { BookMetadata } from './book-metadata.model.js';
+import { cleanContents } from './clean-contents';
+import { MetadataLoader as BaseMetaDataLoader } from '../Base/metadata-loader'
+import { BookMetadata } from './book-metadata.model';
 
 export class MetadataLoader extends BaseMetaDataLoader<BookMetadata> {
     protected async loadData(url: URL): Promise<BookMetadata> {

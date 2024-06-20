@@ -3,15 +3,17 @@ import fs from 'fs'
 import path from 'path'
 import {throttleAll} from 'promise-throttle-all'
 import {Memoize} from 'typescript-memoize';
-import {chapterLoadingFinished, ChapterLoadingFinishedEvent} from '../../Events/chapter-loading-finished.js'
-import {chapterLoadingStarted, ChapterLoadingStartedEvent} from '../../Events/chapter-loading-started.js'
-import {eventEmitter} from '../../Events/event-emitter.js'
-import {MainPageLoaded, mainPageLoaded} from '../../Events/main-page-loaded.js'
-import {AssetDownloader} from '../Base/asset-downloader.js'
-import {Book as BookModel} from '../Base/book.models.js';
-import {BookMetadata} from './book-metadata.model.js';
-import {Chapter} from './chapter.js'
-import {MetadataLoader} from './metadata-loader.js';
+import {chapterLoadingFinished, ChapterLoadingFinishedEvent} from '../../Events/chapter-loading-finished'
+import {chapterLoadingStarted, ChapterLoadingStartedEvent} from '../../Events/chapter-loading-started'
+import {eventEmitter} from '../../Events/event-emitter'
+import {MainPageLoaded, mainPageLoaded} from '../../Events/main-page-loaded'
+import {AssetDownloader} from '../Base/asset-downloader'
+import {Book as BookModel} from '../Base/book.models';
+import {BookMetadata} from './book-metadata.model';
+import {Chapter} from './chapter'
+import {MetadataLoader} from './metadata-loader';
+// @ts-expect-error TS2307
+import style from 'inline:scribblehub.css';
 
 const allChaptersPath = '/wp-admin/admin-ajax.php';
 
@@ -68,10 +70,7 @@ export class Book implements BookModel {
     }
 
     public async getStyles(): Promise<string> {
-        return fs.promises.readFile(
-            path.resolve(__dirname, '../../../assets/styles/scribblehub.css'),
-            'utf8'
-        );
+        return style
     }
 
     private async getChapterUrls(): Promise<URL[]> {

@@ -3,10 +3,10 @@ import fs from 'fs'
 import streamWeb from 'node:stream/web';
 import path from 'path'
 import stream from 'stream'
-import { assetAlreadyDownloaded, AssetAlreadyDownloadedEvent } from '../../Events/asset-already-download.js'
-import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../../Events/asset-download-finished.js'
-import { assetDownloadStarted, AssetDownloadStartedEvent } from '../../Events/asset-download-started.js'
-import { eventEmitter } from '../../Events/event-emitter.js'
+import { assetAlreadyDownloaded, AssetAlreadyDownloadedEvent } from '../../Events/asset-already-download'
+import { assetDownloadFinished, AssetDownloadFinishedEvent } from '../../Events/asset-download-finished'
+import { assetDownloadStarted, AssetDownloadStartedEvent } from '../../Events/asset-download-started'
+import { eventEmitter } from '../../Events/event-emitter'
 
 export class AssetDownloader {
     constructor(

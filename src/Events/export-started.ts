@@ -1,5 +1,5 @@
-import { Book } from '../sites/Base/book.models.js';
-import { BaseEvent } from './base-event.js'
+import { Book } from '../sites/Base/book.models';
+import { BaseEvent } from './base-event'
 
 export const exportStarted = Symbol('exportStarted')
 

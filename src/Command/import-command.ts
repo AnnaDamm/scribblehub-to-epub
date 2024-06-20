@@ -1,13 +1,13 @@
 import {SingleBar} from 'cli-progress'
 import {Command} from 'commander'
 import * as path from 'path'
-import {chapterLoaded} from '../Events/chapter-loaded.js';
-import {chapterLoadingFinished} from '../Events/chapter-loading-finished.js';
-import {chapterLoadingStarted, ChapterLoadingStartedEvent} from '../Events/chapter-loading-started.js';
-import {allEvents, eventEmitter} from '../Events/event-emitter.js';
-import {Exporter} from '../Exporter/exporter.js';
-import {outFile} from '../Exporter/out-file.js';
-import {Book} from '../sites/ScribbleHub/book.js';
+import {chapterLoaded} from '../Events/chapter-loaded';
+import {chapterLoadingFinished} from '../Events/chapter-loading-finished';
+import {chapterLoadingStarted, ChapterLoadingStartedEvent} from '../Events/chapter-loading-started';
+import {allEvents, eventEmitter} from '../Events/event-emitter';
+import {Exporter} from '../Exporter/exporter';
+import {outFile} from '../Exporter/out-file';
+import {Book} from '../sites/ScribbleHub/book';
 import packageJson from '../../package.json';
 
 const commandName = 'scribblehub-to-epub'

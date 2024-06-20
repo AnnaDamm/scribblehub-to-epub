@@ -1,5 +1,5 @@
-import { BookMetadata } from '../sites/Base/book.models.js';
-import { BaseEvent } from './base-event.js'
+import { BookMetadata } from '../sites/Base/book.models';
+import { BaseEvent } from './base-event'
 
 export const mainPageLoaded = Symbol('mainPageLoaded')
 

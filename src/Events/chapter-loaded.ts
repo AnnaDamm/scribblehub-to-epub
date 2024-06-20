@@ -1,5 +1,5 @@
-import { Chapter } from '../sites/Base/book.models.js';
-import { BaseEvent } from './base-event.js';
+import { Chapter } from '../sites/Base/book.models';
+import { BaseEvent } from './base-event';
 
 export const chapterLoaded = Symbol('chapterLoaded')
 

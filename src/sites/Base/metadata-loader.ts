@@ -1,6 +1,6 @@
-import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../../Events/book-metadata-loaded.js';
-import { eventEmitter } from '../../Events/event-emitter.js';
-import { BookMetadata } from './book.models.js';
+import { bookMetadataLoaded, BookMetadataLoadedEvent } from '../../Events/book-metadata-loaded';
+import { eventEmitter } from '../../Events/event-emitter';
+import { BookMetadata } from './book.models';
 
 export abstract class MetadataLoader<MetaDataClass extends BookMetadata> {
     public async load(url: URL): Promise<MetaDataClass> {

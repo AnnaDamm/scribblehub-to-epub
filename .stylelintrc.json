@@ -3,7 +3,7 @@
   "overrides": [
     {
       "files": [
-        "assets/styles/scribblehub.css"
+        "src/sites/ScribbleHub/scribblehub.css"
       ],
       "rules": {
         "selector-class-pattern": null
