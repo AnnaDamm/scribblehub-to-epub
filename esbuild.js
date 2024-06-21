@@ -8,7 +8,7 @@ const inlineImportPlugin = require('esbuild-plugin-inline-import');
     outfile: 'dist/index.js',
     platform: 'node',
     sourcemap: true,
-    minify: true,
+    minify: process.argv.includes('--minify'),
     plugins: [
       inlineImportPlugin(), // Always include this plugin before others
     ]
