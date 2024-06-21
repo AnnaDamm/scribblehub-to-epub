@@ -1,4 +1,21 @@
+
 # Scribblehub-to-epub
+
+---
+
+**NOT WORKING ANY LONGER**
+
+Cloudflare bot detection has made it impossible for me to make this script working any longer.
+In previous times, it was possible to just use a normal fetch on scribblehub to get web pages.
+This is no longer possible.
+I have tried many things but could not get around the bot detection,
+not without using some payed proxies specifically for scraping,
+which is really slow and unreliable at best.
+
+I suggest using a chrome extension like [WebToEpub](https://chromewebstore.google.com/detail/webtoepub/akiljllkbielkidmammnifcnibaigelm)
+which runs directly and chrome and as such, does not suffer from bot detection as much.
+
+---
 
 This program scrapes a single story of [Scribblehub](https://www.scribblehub.com)
 and exports it as a book in epub format.
